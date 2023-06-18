@@ -1,0 +1,8 @@
+.next
+coverage
+node_modules
+yarn.lock
+pull_request_template.md
+
+# 生成されたファイルは無視する
+src/generated
