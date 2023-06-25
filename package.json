@@ -63,5 +63,10 @@
     "postcss": "8.4.24",
     "prisma": "^4.15.0",
     "storybook": "^7.0.20"
+  },
+  "peerDependenciesMeta": {
+    "@aws-sdk/signature-v4-crt": {
+      "optional": true
+    }
   }
 }
