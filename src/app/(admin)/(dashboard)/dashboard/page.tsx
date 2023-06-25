@@ -1,8 +1,6 @@
-import { getServerSession } from 'next-auth';
-
 import { DashBoard } from '@/components/pages/DashBoard';
-import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
+import { getAuthenticateSession } from '@/utils/server/auth';
 
 import type { Metadata } from 'next';
 
@@ -12,13 +10,12 @@ export const metadata: Metadata = {
 };
 
 const DashboardPage = async () => {
-  const session = await getServerSession(authOptions);
-  if (!session || session.user === undefined) {
-    throw new Error('session is undefined');
-  }
-  const forms = await prisma.form.findMany({ where: { userId: session.user.id }, orderBy: { id: 'asc' } });
+  const session = await getAuthenticateSession();
 
-  return <DashBoard formsData={forms} />;
+  const forms = await prisma.form.findMany({ where: { userId: session.user!.id }, orderBy: { id: 'asc' } });
+  const profiles = await prisma.profile.findMany({ where: { userId: session.user!.id }, orderBy: { id: 'asc' } });
+
+  return <DashBoard formsData={forms} profilesData={profiles} />;
 };
 
 export default DashboardPage;

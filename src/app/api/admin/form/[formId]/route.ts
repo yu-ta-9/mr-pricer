@@ -4,6 +4,7 @@ import { getServerSession } from 'next-auth';
 import { putSchema } from '@/app/api/admin/form/[formId]/schema';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
+import { authForm } from '@/utils/auth/resources/form';
 
 /**
  * フォーム取得
@@ -18,11 +19,8 @@ export async function GET(_request: Request, { params }: { params: { formId: str
 
   try {
     // TODO: zennで書いてみる
-    // 認証チェック込み
-    const user = await prisma.user.findUniqueOrThrow({ where: { id: session.user.id } });
-
     const form = await prisma.form.findFirstOrThrow({
-      where: { id: Number(params.formId), userId: user.id },
+      where: { id: Number(params.formId), userId: session.user.id },
       include: {
         fields: {
           include: {
@@ -52,9 +50,7 @@ export async function GET(_request: Request, { params }: { params: { formId: str
       },
     });
 
-    console.log('test', form);
-
-    return NextResponse.json(form);
+    return NextResponse.json(form, { status: 200 });
   } catch (e) {
     return new Response(JSON.stringify({ error: e }), {
       status: 500,
@@ -73,6 +69,8 @@ export async function PUT(req: Request, { params }: { params: { formId: string }
     });
   }
 
+  await authForm(session.user.id, Number(params.formId));
+
   const reqJson = await req.json();
   const parsed = putSchema.safeParse(reqJson);
   if (!parsed.success) {
@@ -87,31 +85,23 @@ export async function PUT(req: Request, { params }: { params: { formId: string }
     );
   }
 
-  // TODO: zennで書いてみる
-  // 認証チェック込み
-  const user = await prisma.user.update({
-    where: { id: session.user.id },
-    data: {
-      forms: {
-        update: {
-          where: { id: Number(params.formId) },
-          data: {
-            name: parsed.data.name,
-            description: parsed.data.description,
-          },
-        },
+  const form = await prisma.$transaction(async (tx) => {
+    // TODO: zennで書いてみる
+    const form = await tx.form.update({
+      where: { id: Number(params.formId) },
+      data: {
+        name: parsed.data.name,
+        description: parsed.data.description,
+        profileId: parsed.data.profileId,
       },
-    },
-    include: {
-      forms: {
-        where: {
-          id: Number(params.formId),
-        },
-      },
-    },
+    });
+
+    return form;
   });
 
-  return NextResponse.json(user.forms[0]);
+  return NextResponse.json(form, {
+    status: 200,
+  });
 }
 
 /**
@@ -125,16 +115,11 @@ export async function DELETE(_request: Request, { params }: { params: { formId: 
     });
   }
 
-  // TODO: zennで書いてみる
-  // 認証チェック込み
-  await prisma.user.update({
-    where: { id: session.user.id },
-    data: {
-      forms: {
-        delete: {
-          id: Number(params.formId),
-        },
-      },
+  await authForm(session.user.id, Number(params.formId));
+
+  await prisma.form.delete({
+    where: {
+      id: Number(params.formId),
     },
   });
 

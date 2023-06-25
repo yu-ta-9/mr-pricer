@@ -5,6 +5,7 @@ import { getServerSession } from 'next-auth';
 
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
+import { FORM_COUNT_LIMIT } from '@/utils/validation/form';
 
 /**
  * フォーム一覧取得
@@ -34,7 +35,10 @@ export async function POST(_req: Request) {
   }
 
   try {
-    // TODO: フォーム作成上限のバリデーションを作る
+    const formCount = await prisma.form.count({ where: { userId: session.user.id } });
+    if (formCount >= FORM_COUNT_LIMIT) {
+      throw new Error('フォームの作成上限に達しました。');
+    }
 
     const form = await prisma.form.create({
       data: {

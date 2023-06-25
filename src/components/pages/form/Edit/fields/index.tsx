@@ -3,12 +3,12 @@ import { FieldType } from '@prisma/client';
 import { memo } from 'react';
 import { useFormContext } from 'react-hook-form';
 
-import { NumberField } from '@/components/pages/Edit/fields/NumberField';
-import { SelectField } from '@/components/pages/Edit/fields/SelectField';
+import { NumberField } from '@/components/pages/form/Edit/fields/NumberField';
+import { SelectField } from '@/components/pages/form/Edit/fields/SelectField';
 import { Button } from '@/components/ui/Button';
 import { IconButton } from '@/components/ui/IconButton';
 
-import type { FormForm } from '@/components/pages/Edit/type';
+import type { FormForm } from '@/components/pages/form/Edit/type';
 import type { FC } from 'react';
 
 type Props = { type: FieldType; index: number; onDelete: (index: number) => void };
@@ -109,7 +109,8 @@ const _Field: FC<Props> = ({ type, index, onDelete }) => {
       </Button>
 
       <div className='absolute top-0 right-0 flex items-center gap-2 text-white translate-x-[16px] -translate-y-1/2 rounded-full'>
-        <IconButton
+        {/* TODO: 順序並び替え機能を実装したら繋ぎ込む */}
+        {/* <IconButton
           bgFill
           theme='primary'
           svgComponent={(className) => <ArrowUpIcon className={className} />}
@@ -120,7 +121,7 @@ const _Field: FC<Props> = ({ type, index, onDelete }) => {
           theme='primary'
           svgComponent={(className) => <ArrowDownIcon className={className} />}
           onClick={() => {}}
-        />
+        /> */}
         <IconButton
           bgFill
           theme='danger'

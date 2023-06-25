@@ -7,8 +7,8 @@ import { authOptions } from '@/lib/auth';
 const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
   const session = await getServerSession(authOptions);
 
-  if (!session) {
-    redirect('signIn');
+  if (!session || session.user === undefined) {
+    redirect('/signIn');
   }
 
   return <Dashboard>{children}</Dashboard>;

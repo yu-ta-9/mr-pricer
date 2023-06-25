@@ -59,6 +59,7 @@ CREATE TABLE "VerificationRequest" (
 CREATE TABLE "Form" (
     "id" SERIAL NOT NULL,
     "user_id" TEXT NOT NULL,
+    "profile_id" INTEGER,
     "name" TEXT NOT NULL,
     "description" TEXT,
     "friendly_key" TEXT NOT NULL,
@@ -129,10 +130,10 @@ CREATE TABLE "FieldNumberRange" (
 -- CreateTable
 CREATE TABLE "Profile" (
     "id" SERIAL NOT NULL,
-    "form_id" INTEGER NOT NULL,
+    "user_id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "content" TEXT NOT NULL,
-    "icon_key" TEXT NOT NULL,
+    "icon_key" TEXT,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
@@ -175,9 +176,6 @@ CREATE UNIQUE INDEX "FieldSelect_field_id_key" ON "FieldSelect"("field_id");
 -- CreateIndex
 CREATE UNIQUE INDEX "FieldNumber_field_id_key" ON "FieldNumber"("field_id");
 
--- CreateIndex
-CREATE UNIQUE INDEX "Profile_form_id_key" ON "Profile"("form_id");
-
 -- AddForeignKey
 ALTER TABLE "Account" ADD CONSTRAINT "Account_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
@@ -186,6 +184,9 @@ ALTER TABLE "Session" ADD CONSTRAINT "Session_user_id_fkey" FOREIGN KEY ("user_i
 
 -- AddForeignKey
 ALTER TABLE "Form" ADD CONSTRAINT "Form_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Form" ADD CONSTRAINT "Form_profile_id_fkey" FOREIGN KEY ("profile_id") REFERENCES "Profile"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Field" ADD CONSTRAINT "Field_form_id_fkey" FOREIGN KEY ("form_id") REFERENCES "Form"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -203,7 +204,7 @@ ALTER TABLE "FieldNumber" ADD CONSTRAINT "FieldNumber_field_id_fkey" FOREIGN KEY
 ALTER TABLE "FieldNumberRange" ADD CONSTRAINT "FieldNumberRange_field_number_id_fkey" FOREIGN KEY ("field_number_id") REFERENCES "FieldNumber"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Profile" ADD CONSTRAINT "Profile_form_id_fkey" FOREIGN KEY ("form_id") REFERENCES "Form"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "Profile" ADD CONSTRAINT "Profile_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "ProfileLink" ADD CONSTRAINT "ProfileLink_profile_id_fkey" FOREIGN KEY ("profile_id") REFERENCES "Profile"("id") ON DELETE CASCADE ON UPDATE CASCADE;

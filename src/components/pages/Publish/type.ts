@@ -1,6 +1,16 @@
-import type { Field, FieldNumber, FieldNumberRange, FieldSelectOption, Form, Prisma } from '@prisma/client';
+import type {
+  Field,
+  FieldNumber,
+  FieldNumberRange,
+  FieldSelectOption,
+  Form,
+  Prisma,
+  Profile,
+  ProfileLink,
+} from '@prisma/client';
 
 export type FormData = Form & {
+  profile: Profile | null;
   fields: (Field & {
     fieldSelect:
       | (Prisma.FieldSelect & {
@@ -14,3 +24,5 @@ export type FormData = Form & {
       | null;
   })[];
 };
+
+export type ProfileData = Profile & { profileLinks: ProfileLink[] };

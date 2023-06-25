@@ -5,24 +5,36 @@ import { FieldType } from '@prisma/client';
 import { useRouter } from 'next/navigation';
 import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
 
-import { Field } from '@/components/pages/Edit/fields';
+import { Field } from '@/components/pages/form/Edit/fields';
 import { Button } from '@/components/ui/Button';
 import { Heading } from '@/components/ui/Heading';
 import { Input } from '@/components/ui/Input';
+import { Select } from '@/components/ui/Select';
 
-import type { FormForm } from '@/components/pages/Edit/type';
+import type { FormForm } from '@/components/pages/form/Edit/type';
+import type { Profile } from '@prisma/client';
 import type { FC } from 'react';
 import type { SubmitHandler } from 'react-hook-form';
 
 type Props = {
   formData: FormForm;
+  profilesData: Profile[];
 };
 
-export const Edit: FC<Props> = ({ formData }) => {
+export const Edit: FC<Props> = ({ formData, profilesData }) => {
   const router = useRouter();
   const formFormMethods = useForm<FormForm>({ defaultValues: formData, mode: 'onChange' });
   const fields = useFieldArray({ control: formFormMethods.control, name: 'fields' });
   const watchFormId = formFormMethods.watch('id');
+
+  const profileOptions = profilesData.map(
+    (profile) =>
+      ({
+        value: profile.id,
+        label: profile.name,
+      } || []),
+    [profilesData],
+  );
 
   const handleAddField = async (type: FieldType) => {
     try {
@@ -74,6 +86,7 @@ export const Edit: FC<Props> = ({ formData }) => {
         body: JSON.stringify({
           name: data.name,
           description: data.description,
+          profileId: !data.profileId ? undefined : Number(data.profileId),
         }),
       });
 
@@ -117,6 +130,14 @@ export const Edit: FC<Props> = ({ formData }) => {
             label='説明'
             type='text'
             placeholder='説明を入力'
+            fullWidth
+          />
+
+          <Select
+            {...formFormMethods.register('profileId')}
+            label='プロフィール'
+            placeholder='プロフィールを選択'
+            options={profileOptions}
             fullWidth
           />
 

@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/Button';
 import { IconButton } from '@/components/ui/IconButton';
 import { Input } from '@/components/ui/Input';
 
-import type { FormForm } from '@/components/pages/Edit/type';
+import type { FormForm } from '@/components/pages/form/Edit/type';
 import type { FC } from 'react';
 
 type Props = {

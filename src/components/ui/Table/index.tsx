@@ -1,6 +1,3 @@
-import { Button } from '@/components/ui/Button';
-import { TextLink } from '@/components/ui/TextLink';
-
 import type { FC } from 'react';
 
 export type Cell = {
@@ -8,7 +5,7 @@ export type Cell = {
   value: any;
 };
 
-type Props = { headers: string[]; data: Cell[][]; formIds: number[]; onDelete: (formId: number) => void };
+type Props = { headers: string[]; data: any[][]; formIds: number[]; onDelete: (formId: number) => void };
 
 export const Table: FC<Props> = ({ headers, data, formIds, onDelete }) => {
   return (
@@ -21,14 +18,6 @@ export const Table: FC<Props> = ({ headers, data, formIds, onDelete }) => {
                 {header}
               </th>
             ))}
-
-            <th scope='col' className='px-6 py-3'>
-              <span className='sr-only'>編集</span>
-            </th>
-
-            <th scope='col' className='px-6 py-3'>
-              <span className='sr-only'>削除</span>
-            </th>
           </tr>
         </thead>
         <tbody>
@@ -36,20 +25,9 @@ export const Table: FC<Props> = ({ headers, data, formIds, onDelete }) => {
             <tr key={i} className='bg-white border-b hover:bg-gray-50'>
               {row.map((cell, j) => (
                 <td key={j} className='px-6 py-4'>
-                  {cell.type === 'text' && cell.value}
-                  {cell.type === 'link' && <TextLink type='external' href={cell.value} label={cell.value} />}
+                  {cell}
                 </td>
               ))}
-
-              <td className='px-6 py-4 text-right'>
-                <TextLink type='internal' href={`${formIds[i]}/edit/`} label='編集' />
-              </td>
-
-              <td className='px-6 py-4 text-right'>
-                <Button theme='danger' type='button' onClick={() => onDelete(formIds[i])}>
-                  削除
-                </Button>
-              </td>
             </tr>
           ))}
         </tbody>

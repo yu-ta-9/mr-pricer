@@ -4,6 +4,7 @@ import { getServerSession } from 'next-auth';
 import { postSchema } from '@/app/api/admin/form/[formId]/field/schema';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
+import { authForm } from '@/utils/auth/resources/form';
 
 /**
  * フィールド作成
@@ -15,6 +16,8 @@ export async function POST(req: Request, { params }: { params: { formId: string 
       status: 401,
     });
   }
+
+  await authForm(session.user.id, Number(params.formId));
 
   const reqJson = await req.json();
   const parsed = postSchema.safeParse(reqJson);
@@ -33,17 +36,9 @@ export async function POST(req: Request, { params }: { params: { formId: string 
   const { type } = parsed.data;
 
   try {
-    // 認可チェック
-    const form = await prisma.form.findFirstOrThrow({
-      where: {
-        id: Number(params.formId),
-        userId: session.user.id,
-      },
-    });
-
     const field = await prisma.field.create({
       data: {
-        formId: form.id,
+        formId: Number(params.formId),
         name: '設問名',
         description: '',
         type: type,

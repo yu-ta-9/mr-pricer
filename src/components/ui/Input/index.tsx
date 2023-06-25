@@ -3,7 +3,7 @@ import { forwardRef } from 'react';
 type Props = {
   label?: string;
   placeholder?: string;
-  type: 'text' | 'number';
+  type: 'text' | 'number' | 'url';
   fullWidth?: boolean;
 } & React.InputHTMLAttributes<HTMLInputElement>;
 

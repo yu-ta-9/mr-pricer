@@ -50,6 +50,7 @@ model User {
   updatedAt  DateTime @updatedAt @map("updated_at")
 
   forms     Form[]
+  profiles  Profile[]
 }
 
 model VerificationRequest {
@@ -66,13 +67,14 @@ model Form {
   id            Int      @id @default(autoincrement())
   user          User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId        String    @map("user_id")
+  profile       Profile?   @relation(fields: [profileId], references: [id])
+  profileId     Int?    @map("profile_id")
   name          String
   description   String?
   friendlyKey   String    @unique @map("friendly_key")
   createdAt  DateTime @default(now()) @map("created_at")
   updatedAt  DateTime @updatedAt @map("updated_at")
   fields     Field[]
-  profile    Profile?
 }
 
 model Field {
@@ -137,15 +139,16 @@ model FieldNumberRange {
 
 model Profile {
   id Int @id @default(autoincrement())
-  form          Form   @relation(fields: [formId], references: [id], onDelete: Cascade)
-  formId        Int    @map("form_id") @unique
+  user          User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId        String    @map("user_id")
   name          String
   content       String @db.Text
-  icon_key      String
+  iconKey       String? @map("icon_key")
   createdAt  DateTime @default(now()) @map("created_at")
   updatedAt  DateTime @updatedAt @map("updated_at")
 
   profileLinks  ProfileLink[]
+  forms         Form[]
 }
 
 model ProfileLink {
@@ -157,4 +160,3 @@ model ProfileLink {
   createdAt  DateTime @default(now()) @map("created_at")
   updatedAt  DateTime @updatedAt @map("updated_at")
 }
-

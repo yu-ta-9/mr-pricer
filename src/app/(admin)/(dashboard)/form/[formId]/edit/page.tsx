@@ -1,33 +1,19 @@
-import { getServerSession } from 'next-auth';
-
-import { Edit } from '@/components/pages/Edit';
-import { authOptions } from '@/lib/auth';
+import { Edit } from '@/components/pages/form/Edit';
 import { prisma } from '@/lib/prisma';
+import { getAuthenticateSession } from '@/utils/server/auth';
 
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Edit',
-  description: 'Edit',
+  title: 'フォーム編集',
+  description: 'フォーム編集',
 };
 
 const EditPage = async ({ params }: { params: { formId: string } }) => {
-  const session = await getServerSession(authOptions);
-  try {
-    if (!session || session.user === undefined) {
-      throw new Error('session is undefined');
-    }
-  } catch (err) {
-    return {
-      redirect: {
-        destination: '/signIn',
-        permanent: false,
-      },
-    };
-  }
+  const session = await getAuthenticateSession();
 
   try {
-    const user = await prisma.user.findUniqueOrThrow({ where: { id: session.user.id } });
+    const user = await prisma.user.findUniqueOrThrow({ where: { id: session.user!.id } });
     const form = await prisma.form.findFirstOrThrow({
       where: { id: Number(params.formId), userId: user.id },
       include: {
@@ -58,9 +44,10 @@ const EditPage = async ({ params }: { params: { formId: string } }) => {
         },
       },
     });
+    const profiles = await prisma.profile.findMany({ where: { userId: user.id }, orderBy: { id: 'asc' } });
 
     // TODO: 後で考える
-    return <Edit formData={form as any} />;
+    return <Edit formData={form as any} profilesData={profiles} />;
   } catch (err) {
     return {
       redirect: {

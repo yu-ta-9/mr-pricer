@@ -5,6 +5,7 @@ import { getServerSession } from 'next-auth';
 import { putSchema } from '@/app/api/admin/form/[formId]/field/[fieldId]/schema';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
+import { authForm } from '@/utils/auth/resources/form';
 
 /**
  * フィールド取得
@@ -18,20 +19,14 @@ export async function GET(_request: Request, { params }: { params: { formId: str
     });
   }
 
+  await authForm(session.user.id, Number(params.formId));
+
   try {
     // TODO: zennで書いてみる
-    // 認可チェック
-    const form = await prisma.form.findFirstOrThrow({
-      where: {
-        id: Number(params.formId),
-        userId: session.user.id,
-      },
-    });
-
     const field = await prisma.field.findFirstOrThrow({
       where: {
         id: Number(params.fieldId),
-        formId: form.id,
+        formId: Number(params.formId),
       },
     });
 
@@ -54,6 +49,8 @@ export async function PUT(req: Request, { params }: { params: { formId: string; 
     });
   }
 
+  await authForm(session.user.id, Number(params.formId));
+
   const reqJson = await req.json();
   const parsed = putSchema.safeParse(reqJson);
   if (!parsed.success) {
@@ -69,18 +66,10 @@ export async function PUT(req: Request, { params }: { params: { formId: string; 
   }
 
   try {
-    // 認可チェック
-    const form = await prisma.form.findFirstOrThrow({
-      where: {
-        id: Number(params.formId),
-        userId: session.user.id,
-      },
-    });
-
     const field = await prisma.field.findFirstOrThrow({
       where: {
         id: Number(params.fieldId),
-        formId: form.id,
+        formId: Number(params.formId),
       },
       include: {
         fieldSelect: true,
@@ -171,18 +160,12 @@ export async function DELETE(_request: Request, { params }: { params: { formId: 
     });
   }
 
+  await authForm(session.user.id, Number(params.formId));
+
   // TODO: zennで書いてみる
   try {
-    // 認可チェック
-    const form = await prisma.form.findFirstOrThrow({
-      where: {
-        id: Number(params.formId),
-        userId: session.user.id,
-      },
-    });
-
     await prisma.field.deleteMany({
-      where: { id: Number(params.fieldId), formId: form.id },
+      where: { id: Number(params.fieldId), formId: Number(params.formId) },
     });
 
     return NextResponse.json({ result: 'ok' });
