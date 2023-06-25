@@ -9,6 +9,7 @@ import type { FC } from 'react';
 type Props = { field: FormData['fields'][number]; index: number };
 
 const _Field: FC<Props> = ({ field, index }) => {
+  console.log(index);
   switch (field.type) {
     case 'SELECT':
       return (

@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   description: 'Sign in to your account',
 };
 
-export const SignIn = async () => {
+const SignIn = async () => {
   const session = await getServerSession(authOptions);
 
   if (session) {

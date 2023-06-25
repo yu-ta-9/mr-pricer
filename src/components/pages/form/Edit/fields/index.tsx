@@ -1,4 +1,4 @@
-import { ArrowDownIcon, ArrowUpIcon, TrashIcon } from '@heroicons/react/24/solid';
+import { TrashIcon } from '@heroicons/react/24/solid';
 import { FieldType } from '@prisma/client';
 import { memo } from 'react';
 import { useFormContext } from 'react-hook-form';

@@ -5,15 +5,11 @@ import { Result } from '@/components/pages/Publish/Profile/Result';
 import { usePublishPageContext } from '@/components/pages/Publish/usePublishPageContext';
 import { Button } from '@/components/ui/Button';
 import { Heading } from '@/components/ui/Heading';
-import { Input } from '@/components/ui/Input';
 import { LoadingIcon } from '@/components/ui/LoadingIcon';
-import { Select } from '@/components/ui/Select';
 
 import type { FC } from 'react';
 
-type Props = object;
-
-export const Form: FC<Props> = () => {
+export const Form: FC = () => {
   const { formData } = usePublishPageContext();
 
   const [isCalculating, setIsCalculating] = useState(false);
@@ -24,7 +20,7 @@ export const Form: FC<Props> = () => {
 
     await new Promise((resolve) => setTimeout(resolve, 500));
 
-    setResult({});
+    setResult(undefined);
 
     setIsCalculating(false);
     // await fetch('/api/form', {

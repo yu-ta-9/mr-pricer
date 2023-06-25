@@ -7,7 +7,7 @@ export type Cell = {
 
 type Props = { headers: string[]; data: any[][]; formIds: number[]; onDelete: (formId: number) => void };
 
-export const Table: FC<Props> = ({ headers, data, formIds, onDelete }) => {
+export const Table: FC<Props> = ({ headers, data }) => {
   return (
     <div className='relative w-full overflow-x-auto shadow-md sm:rounded-lg'>
       <table className='w-full text-sm text-left text-black'>
