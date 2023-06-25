@@ -5,6 +5,11 @@ const nextConfig = {
   sassOptions: {
     includePaths: [path.join(__dirname, 'styles')],
   },
-};
+  webpack: (config, options) => {
+    config.externals.push({
+      '@aws-sdk/signature-v4-crt': '@aws-sdk/signature-v4-crt',
+    });
 
-module.exports = nextConfig;
+    return config;
+  },
+};
