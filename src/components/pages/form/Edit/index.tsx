@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/Button';
 import { Heading } from '@/components/ui/Heading';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
+import { useToast } from '@/hooks/useToast';
 
 import type { FormForm } from '@/components/pages/form/Edit/type';
 import type { Profile } from '@prisma/client';
@@ -23,6 +24,7 @@ type Props = {
 
 export const Edit: FC<Props> = ({ formData, profilesData }) => {
   const router = useRouter();
+  const { openToast } = useToast();
   const formFormMethods = useForm<FormForm>({ defaultValues: formData, mode: 'onChange' });
   const fields = useFieldArray({ control: formFormMethods.control, name: 'fields' });
   const watchFormId = formFormMethods.watch('id');
@@ -53,10 +55,10 @@ export const Edit: FC<Props> = ({ formData, profilesData }) => {
 
       const data = await res.json();
       fields.append(data);
-      window.alert('フィールドを作成しました');
+
+      openToast('success', 'フィールドを作成しました');
     } catch (err) {
-      console.error(err);
-      window.alert('エラーが発生しました');
+      openToast('error', 'エラーが発生しました');
     }
   };
 
@@ -70,9 +72,9 @@ export const Edit: FC<Props> = ({ formData, profilesData }) => {
       });
 
       fields.remove(index);
-      window.alert('削除しました');
+      openToast('success', '削除しました');
     } catch (err) {
-      window.alert('エラーが発生しました');
+      openToast('error', 'エラーが発生しました');
     }
   };
 
@@ -92,10 +94,9 @@ export const Edit: FC<Props> = ({ formData, profilesData }) => {
 
       if (!res.ok) throw new Error('error');
 
-      window.alert('フォームを更新しました');
+      openToast('success', 'フォームを更新しました');
     } catch (err) {
-      console.error(err);
-      window.alert('エラーが発生しました');
+      openToast('error', 'エラーが発生しました');
     }
   };
 

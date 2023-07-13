@@ -10,7 +10,7 @@ import type {
 } from '@prisma/client';
 
 export type FormData = Form & {
-  profile: Profile | null;
+  profile: (Profile & { profileLinks: ProfileLink[] }) | null;
   fields: (Field & {
     fieldSelect:
       | (Prisma.FieldSelect & {

@@ -112,13 +112,13 @@ export async function PUT(req: Request, { params }: { params: { formId: string; 
                     upsert: parsed.data.options?.map((option) => ({
                       where: { id: option.id || 0 }, // MEMO: undefinedを渡すとエラーになるのであり得ない数を入れる
                       create: {
-                        gte: option.gte,
-                        lt: option.lt,
+                        gte: option.gte || null,
+                        lt: option.lt || null,
                         price: option.price,
                       },
                       update: {
-                        gte: option.gte,
-                        lt: option.lt,
+                        gte: option.gte || null,
+                        lt: option.lt || null,
                         price: option.price,
                       },
                     })),
@@ -128,16 +128,20 @@ export async function PUT(req: Request, { params }: { params: { formId: string; 
             }),
       },
       include: {
-        fieldSelect: {
-          include: {
-            fieldSelectOptions: true,
+        ...(parsed.data.type === FieldType.SELECT && {
+          fieldSelect: {
+            include: {
+              fieldSelectOptions: true,
+            },
           },
-        },
-        fieldNumber: {
-          include: {
-            fieldNumberRanges: true,
+        }),
+        ...(parsed.data.type === FieldType.NUMBER && {
+          fieldNumber: {
+            include: {
+              fieldNumberRanges: true,
+            },
           },
-        },
+        }),
       },
     });
 

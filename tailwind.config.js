@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+  mode: 'jit',
   content: [
     './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
     './src/components/**/*.{js,ts,jsx,tsx,mdx}',
@@ -15,6 +16,7 @@ module.exports = {
       black: '#000000',
       white: '#FFFFFF',
       danger: '#FF4747',
+      success: '#00C48C',
     },
     extend: {
       backgroundImage: {

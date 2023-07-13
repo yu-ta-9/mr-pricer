@@ -2,7 +2,7 @@ import { Inter } from 'next/font/google';
 
 import './globals.css';
 
-import { AuthProvider } from '@/components/providers/AuthProvider';
+import { AuthProvider } from '@/providers/AuthProvider';
 
 import type { Metadata } from 'next';
 

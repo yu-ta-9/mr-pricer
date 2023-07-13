@@ -1,20 +1,21 @@
-import Head from 'next/head';
+import { cache } from 'react';
 
 import { Publish } from '@/components/pages/Publish';
 import { prisma } from '@/lib/prisma';
+import { ToastProvider } from '@/providers/ToastProvider';
 import { getS3PresignedUrl } from '@/utils/aws/s3';
 
 import type { Metadata } from 'next';
 
-export const metadata: Metadata = {
-  title: 'Mr.Pricer',
-  description: 'Mr.Pricer',
+type Props = {
+  params: {
+    friendlyKey: string;
+  };
 };
 
-const FriendlyKey = async ({ params }: { params: { friendlyKey: string } }) => {
-  const key = params.friendlyKey;
+const getForm = cache(async (friendlyKey: string) => {
   const form = await prisma.form.findFirstOrThrow({
-    where: { friendlyKey: key },
+    where: { friendlyKey },
     include: {
       profile: {
         include: {
@@ -49,20 +50,26 @@ const FriendlyKey = async ({ params }: { params: { friendlyKey: string } }) => {
     },
   });
 
+  return form;
+});
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const form = await getForm(params.friendlyKey);
+  return { title: form.name, description: form.description || form.name };
+}
+
+const FriendlyKey = async ({ params }: Props) => {
+  const form = await getForm(params.friendlyKey);
+
   let profileIconUrl;
   if (form.profile !== null && form.profile.iconKey !== null) {
     profileIconUrl = await getS3PresignedUrl(form.userId, String(form.profile.id), form.profile.iconKey);
   }
 
   return (
-    <>
-      <Head>
-        <title>{form.name}</title>
-        <meta name='description' content={form.description || form.name} />
-      </Head>
-
+    <ToastProvider>
       <Publish formData={form as any} profileIconUrl={profileIconUrl} />
-    </>
+    </ToastProvider>
   );
 };
 

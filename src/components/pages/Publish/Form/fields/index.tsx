@@ -9,22 +9,23 @@ import type { FC } from 'react';
 type Props = { field: FormData['fields'][number]; index: number };
 
 const _Field: FC<Props> = ({ field, index }) => {
-  console.log(index);
   switch (field.type) {
     case 'SELECT':
       return (
         <SelectField
+          index={index}
+          id={field.id}
           label={field.name}
           options={
             field.fieldSelect?.fieldSelectOptions.map((option) => ({
               label: option.label,
-              value: String(option.price),
+              value: String(option.id),
             })) || []
           }
         />
       );
     case 'NUMBER':
-      return <NumberField label={field.name} />;
+      return <NumberField index={index} id={field.id} label={field.name} />;
   }
 };
 

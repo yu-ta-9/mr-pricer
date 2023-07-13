@@ -18,11 +18,13 @@ export const putSchema = z.discriminatedUnion('type', [
       .array(
         z.object({
           id: z.number().int().optional(),
-          gte: z.number().int().gte(0),
-          lt: z.number().int().gte(0),
+          gte: z.number().int().gte(0).optional(),
+          lt: z.number().int().gte(0).optional(),
           price: z.number().int().gte(0),
         }),
       )
       .optional(),
   }),
 ]);
+
+export type putSchemaType = z.infer<typeof putSchema>;

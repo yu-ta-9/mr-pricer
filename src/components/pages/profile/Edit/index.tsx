@@ -11,6 +11,7 @@ import { Heading } from '@/components/ui/Heading';
 import { IconButton } from '@/components/ui/IconButton';
 import { Input } from '@/components/ui/Input';
 import { Textarea } from '@/components/ui/Textarea';
+import { useToast } from '@/hooks/useToast';
 
 import type { ProfileForm } from '@/components/pages/profile/Edit/type';
 import type { SubmitHandler } from 'react-hook-form';
@@ -22,6 +23,7 @@ type Props = {
 
 export const Edit: FC<Props> = ({ profileData, profileIconUrl }) => {
   const router = useRouter();
+  const { openToast } = useToast();
   const profileFormMethods = useForm<ProfileForm>({ defaultValues: profileData, mode: 'onChange' });
   const profileLinkFields = useFieldArray({
     control: profileFormMethods.control,
@@ -50,10 +52,9 @@ export const Edit: FC<Props> = ({ profileData, profileIconUrl }) => {
       profileFormMethods.setValue('iconKey', resJson.profile.iconKey);
       setIconUrl(resJson.iconUrl);
 
-      window.alert('プロフィール画像を更新しました');
+      openToast('success', 'プロフィール画像を更新しました');
     } catch (err) {
-      console.error(err);
-      window.alert('エラーが発生しました');
+      openToast('error', 'エラーが発生しました');
     }
   };
 
@@ -72,42 +73,20 @@ export const Edit: FC<Props> = ({ profileData, profileIconUrl }) => {
       profileFormMethods.setValue('iconKey', null);
       setIconUrl(undefined);
 
-      window.alert('プロフィール画像を削除しました');
+      openToast('success', 'プロフィール画像を削除しました');
     } catch (err) {
-      console.error(err);
-      window.alert('エラーが発生しました');
+      openToast('error', 'エラーが発生しました');
     }
   };
 
   const onSubmit: SubmitHandler<ProfileForm> = async (data) => {
     try {
-      // TODO: formData verの覚書
-      // const body = new FormData();
-      // body.append('name', data.name);
-      // body.append('content', data.content);
-      // if (data.iconFile !== undefined && data.iconFile.length > 0) {
-      //   body.append('iconFile', data.iconFile[0]);
-      // }
-      // if (data.iconKey) {
-      //   body.append('iconKey', data.iconKey);
-      // }
-      // data.profileLinks.forEach((profileLink, i) => {
-      //   if (profileLink.id !== undefined) {
-      //     body.append(`profileLinks[${i}][id]`, String(profileLink.id));
-      //   }
-      //   body.append(`profileLinks[${i}][label]`, profileLink.label);
-      //   body.append(`profileLinks[${i}][url]`, profileLink.url);
-      // });
-      // data.deleteProfileLinksIds?.forEach((id, i) => {
-      //   body.append(`deleteProfileLinksIds[${i}]`, String(id));
-      // });
-
       const res = await fetch(`/api/admin/profile/${data.id}`, {
         method: 'PUT',
         body: JSON.stringify({
           name: data.name,
           content: data.content,
-          profileLinks: data.profileLinks.map(profileLink => ({
+          profileLinks: data.profileLinks.map((profileLink) => ({
             id: profileLink.id,
             label: profileLink.label,
             url: profileLink.url,
@@ -126,10 +105,10 @@ export const Edit: FC<Props> = ({ profileData, profileIconUrl }) => {
       }));
       profileFormMethods.setValue('profileLinks', profileLinks);
 
-      window.alert('プロフィールを更新しました');
+      openToast('success', 'プロフィールを更新しました');
     } catch (err) {
       console.error(err);
-      window.alert('エラーが発生しました');
+      openToast('error', 'エラーが発生しました');
     }
   };
 

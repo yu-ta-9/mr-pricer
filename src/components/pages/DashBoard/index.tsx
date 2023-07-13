@@ -8,6 +8,7 @@ import { Heading } from '@/components/ui/Heading';
 import { IconButton } from '@/components/ui/IconButton';
 import { Table } from '@/components/ui/Table';
 import { TextLink } from '@/components/ui/TextLink';
+import { useToast } from '@/hooks/useToast';
 import { getPublishUrl } from '@/utils/url';
 import { FORM_COUNT_LIMIT } from '@/utils/validation/form';
 import { PROFILE_COUNT_LIMIT } from '@/utils/validation/profile';
@@ -21,6 +22,7 @@ type Props = {
 };
 
 export const DashBoard: FC<Props> = ({ formsData, profilesData }) => {
+  const { openToast } = useToast();
   const [forms, setForms] = useState<Form[]>(formsData);
   const [profiles, setProfiles] = useState<Profile[]>(profilesData);
   const tableFormRows = useMemo<any[][]>(
@@ -37,6 +39,7 @@ export const DashBoard: FC<Props> = ({ formsData, profilesData }) => {
             )}
             onClick={() => {
               navigator.clipboard.writeText(getPublishUrl(form));
+              openToast('info', 'コピーしました');
             }}
           />
         </div>,
@@ -78,10 +81,9 @@ export const DashBoard: FC<Props> = ({ formsData, profilesData }) => {
       const json = await res.json();
       setForms((prev) => [...prev, json]);
 
-      window.alert('フォームを作成しました');
+      openToast('success', 'フォームを作成しました');
     } catch (err) {
-      console.error(err);
-      window.alert('エラーが発生しました');
+      openToast('error', 'エラーが発生しました');
     }
   };
 
@@ -100,10 +102,9 @@ export const DashBoard: FC<Props> = ({ formsData, profilesData }) => {
 
       setForms((prev) => prev.filter((form) => form.id !== formId));
 
-      window.alert('フォームを削除しました');
+      openToast('success', 'フォームを削除しました');
     } catch (err) {
-      console.error(err);
-      window.alert('エラーが発生しました');
+      openToast('error', 'エラーが発生しました');
     }
   };
 
@@ -121,10 +122,9 @@ export const DashBoard: FC<Props> = ({ formsData, profilesData }) => {
       const json = await res.json();
       setProfiles((prev) => [...prev, json]);
 
-      window.alert('プロフィールを作成しました');
+      openToast('success', 'プロフィールを作成しました');
     } catch (err) {
-      console.error(err);
-      window.alert('エラーが発生しました');
+      openToast('error', 'エラーが発生しました');
     }
   };
 
@@ -143,10 +143,9 @@ export const DashBoard: FC<Props> = ({ formsData, profilesData }) => {
 
       setProfiles((prev) => prev.filter((profile) => profile.id !== profileId));
 
-      window.alert('プロフィールを削除しました');
+      openToast('success', 'プロフィールを削除しました');
     } catch (err) {
-      console.error(err);
-      window.alert('エラーが発生しました');
+      openToast('error', 'エラーが発生しました');
     }
   };
 

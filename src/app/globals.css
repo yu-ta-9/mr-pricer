@@ -27,17 +27,65 @@ body {
 
 /* custom classes */
 
-.custom-heading {
-  @apply text-sm font-bold;
-  position: relative;
+@keyframes toast-show {
+  from {
+    transform: translate(100%, 0);
+    opacity: 0;
+  }
+
+  to {
+    transform: translate(0%, 0);
+    opacity: 1;
+  }
 }
 
-.custom-heading::before {
-  @apply bg-base-secondary;
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 4px;
+@keyframes toast-hide {
+  from {
+    transform: translate(0%, 0);
+    opacity: 1;
+  }
+
+  to {
+    transform: translate(100%, 0);
+    opacity: 0;
+  }
+}
+
+@layer components {
+  .custom-heading {
+    @apply text-sm font-bold;
+    position: relative;
+  }
+
+  .custom-heading::before {
+    @apply bg-base-secondary;
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 4px;
+  }
+
+  .toast {
+    @apply p-2 text-sm font-bold rounded-md shadow-md bg-primary flex items-center z-[10000] gap-2;
+
+    animation-duration: 0.3s;
+    animation-timing-function: ease-in-out;
+    animation-fill-mode: forwards;
+    position: fixed;
+    bottom: 32px;
+    right: 16px;
+
+    min-width: 248px;
+    padding: 8px 16px;
+  }
+
+  .toast-show {
+    animation-name: toast-show;
+  }
+
+  .toast-hide {
+    animation-name: toast-hide;
+  }
 }

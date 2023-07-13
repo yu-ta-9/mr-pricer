@@ -14,7 +14,7 @@ export const Table: FC<Props> = ({ headers, data }) => {
         <thead className='text-xs text-white uppercase bg-base-primary'>
           <tr>
             {headers.map((header, i) => (
-              <th key={i} scope='col' className='px-6 py-3'>
+              <th key={i} scope='col' className='px-6 py-3 break-keep'>
                 {header}
               </th>
             ))}
@@ -24,7 +24,7 @@ export const Table: FC<Props> = ({ headers, data }) => {
           {data.map((row, i) => (
             <tr key={i} className='bg-white border-b hover:bg-gray-50'>
               {row.map((cell, j) => (
-                <td key={j} className='px-6 py-4'>
+                <td key={j} className='px-6 py-4 break-keep'>
                   {cell}
                 </td>
               ))}

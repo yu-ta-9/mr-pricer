@@ -18,10 +18,10 @@ const getRangeLabel = (index: number, length: number) => {
   }
 
   if (index + 1 === length) {
-    return `(${index + 1}) 入力が(${index + 2})以上の時`;
+    return `(${index + 1}) 入力が(${index})以上の時`;
   }
 
-  return `(${index + 1}) 入力が(${index + 1})以上 (${index + 2})未満の時`;
+  return `(${index + 1}) 入力が(${index})以上 (${index + 1})未満の時`;
 };
 
 export const NumberField: FC<Props> = ({ index }) => {
@@ -41,11 +41,11 @@ export const NumberField: FC<Props> = ({ index }) => {
           <p>{getRangeLabel(i, fieldNumberRanges.fields.length)}</p>
 
           <div className='flex items-center gap-2'>
-            {i === fieldNumberRanges.fields.length - 1 ? (
+            {fieldNumberRanges.fields.length > 1 && i === fieldNumberRanges.fields.length - 1 ? (
               <div className='w-full' />
             ) : (
               <Input
-                {...register(`fields.${index}.fieldNumber.fieldNumberRanges.${i}.lt`)}
+                {...register(`fields.${index}.fieldNumber.fieldNumberRanges.${i}.lt`, { valueAsNumber: true })}
                 label='値'
                 type='number'
                 placeholder='値を入力'
@@ -55,7 +55,7 @@ export const NumberField: FC<Props> = ({ index }) => {
 
             <Input
               {...register(`fields.${index}.fieldNumber.fieldNumberRanges.${i}.price`, { valueAsNumber: true })}
-              label='金額'
+              label='金額（税抜）'
               type='number'
               placeholder='金額'
             />
@@ -79,13 +79,13 @@ export const NumberField: FC<Props> = ({ index }) => {
         type='button'
         svgComponent={(className) => <PlusIcon className={className} />}
         onClick={() => {
-          // TODO: 考える
           fieldNumberRanges.append({
             gte: 0,
             lt: 0,
             price: 0,
           });
         }}
+        disabled={fieldNumberRanges.fields.length >= 5}
       >
         追加
       </Button>

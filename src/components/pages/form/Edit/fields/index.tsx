@@ -7,7 +7,9 @@ import { NumberField } from '@/components/pages/form/Edit/fields/NumberField';
 import { SelectField } from '@/components/pages/form/Edit/fields/SelectField';
 import { Button } from '@/components/ui/Button';
 import { IconButton } from '@/components/ui/IconButton';
+import { useToast } from '@/hooks/useToast';
 
+import type { putSchemaType } from '@/app/api/admin/form/[formId]/field/[fieldId]/schema';
 import type { FormForm } from '@/components/pages/form/Edit/type';
 import type { FC } from 'react';
 
@@ -15,82 +17,91 @@ type Props = { type: FieldType; index: number; onDelete: (index: number) => void
 
 const getField = (type: FieldType, index: number) => {
   switch (type) {
-    case 'SELECT':
+    case FieldType.SELECT:
       return <SelectField index={index} />;
-    case 'NUMBER':
+    case FieldType.NUMBER:
       return <NumberField index={index} />;
   }
 };
 
 const getFieldName = (type: FieldType) => {
   switch (type) {
-    case 'SELECT':
+    case FieldType.SELECT:
       return '選択入力';
-    case 'NUMBER':
+    case FieldType.NUMBER:
       return '数値入力';
   }
 };
 
 const _Field: FC<Props> = ({ type, index, onDelete }) => {
+  const { openToast } = useToast();
   const { getValues, setValue } = useFormContext<FormForm>();
 
   const handleUpdate = async () => {
     try {
       const fieldValue = getValues(`fields.${index}`);
       const { name, description, type, fieldSelect, fieldNumber } = fieldValue;
-      const options =
-        type === FieldType.SELECT
-          ? fieldSelect?.fieldSelectOptions.map((option) => ({
-              id: option.id,
-              label: option.label,
-              price: option.price,
-            }))
-          : fieldNumber?.fieldNumberRanges.map((range) => ({
-              id: range.id,
-              price: range.price,
-              gte: range.gte,
-              lt: range.lt,
-            }));
+
+      let param: putSchemaType;
+      if (type === FieldType.SELECT) {
+        param = {
+          type: FieldType.SELECT,
+          name,
+          description,
+          options: fieldSelect?.fieldSelectOptions.map((option) => ({
+            id: option.id,
+            label: option.label,
+            price: option.price,
+          })),
+        };
+      } else {
+        // MEMO: ltはこのタイミングで動的に生成する
+        param = {
+          type: FieldType.NUMBER,
+          name,
+          description,
+          options: fieldNumber?.fieldNumberRanges.map((range, i) => ({
+            id: range.id,
+            price: range.price,
+            gte: i === 0 ? undefined : fieldNumber?.fieldNumberRanges[i - 1].lt,
+            lt: i !== fieldNumber?.fieldNumberRanges.length - 1 ? fieldNumber?.fieldNumberRanges[i].lt : undefined,
+          })),
+        };
+      }
 
       const res = await fetch(`/api/admin/form/${getValues('id')}/field/${getValues(`fields.${index}.id`)}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          type,
-          name,
-          description,
-          options,
-        }),
+        body: JSON.stringify(param),
       });
 
       if (!res.ok) throw new Error('error');
 
       // MEMO: 各オプションにidを付与し、増分判定から除外できるようにする
       const data = await res.json();
-      if (fieldValue.type === FieldType.SELECT) {
-        const newFieldSelectOptionValue = fieldValue.fieldSelect!.fieldSelectOptions.map((option, i) => ({
+      if (type === FieldType.SELECT) {
+        const newFieldSelectOptionValue = fieldSelect?.fieldSelectOptions.map((option, i) => ({
           ...option,
           id: data.fieldSelect.fieldSelectOptions[i].id,
         }));
 
-        setValue(`fields.${index}.fieldSelect.fieldSelectOptions`, newFieldSelectOptionValue);
+        setValue(`fields.${index}.fieldSelect.fieldSelectOptions`, newFieldSelectOptionValue || []);
       }
 
-      if (fieldValue.type === FieldType.NUMBER) {
-        const newFieldSelectOptionValue = fieldValue.fieldNumber!.fieldNumberRanges.map((range, i) => ({
+      if (type === FieldType.NUMBER) {
+        const newFieldSelectOptionValue = fieldNumber?.fieldNumberRanges.map((range, i) => ({
           ...range,
-          id: data.fieldNumberRange.fieldNumberRanges[i].id,
+          id: data.fieldNumber.fieldNumberRanges[i].id,
         }));
 
-        setValue(`fields.${index}.fieldNumber.fieldNumberRanges`, newFieldSelectOptionValue);
+        setValue(`fields.${index}.fieldNumber.fieldNumberRanges`, newFieldSelectOptionValue || []);
       }
 
-      window.alert('フィールドを更新しました');
+      openToast('success', 'フィールドを更新しました');
     } catch (err) {
-      console.error(err);
-      window.alert('エラーが発生しました');
+      openToast('error', 'エラーが発生しました');
     }
   };
 
