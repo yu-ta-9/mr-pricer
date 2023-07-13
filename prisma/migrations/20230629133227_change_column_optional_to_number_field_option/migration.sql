@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "FieldNumberRange" ALTER COLUMN "gte" DROP NOT NULL,
+ALTER COLUMN "lt" DROP NOT NULL;

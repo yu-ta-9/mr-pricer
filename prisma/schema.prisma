@@ -130,8 +130,8 @@ model FieldNumberRange {
   id            Int    @id @default(autoincrement())
   fieldNumber   FieldNumber  @relation(fields: [fieldNumberId], references: [id], onDelete: Cascade)
   fieldNumberId Int    @map("field_number_id")
-  gte           Int
-  lt            Int
+  gte           Int?
+  lt            Int?
   price         Int
   createdAt  DateTime @default(now()) @map("created_at")
   updatedAt  DateTime @updatedAt @map("updated_at")
