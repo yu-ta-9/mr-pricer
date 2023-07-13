@@ -1,0 +1,39 @@
+name: test ci
+
+on:
+  pull_request:
+
+jobs:
+  node-test:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: ['ubuntu-latest']
+        node: [18.x]
+
+    steps:
+      - name: setup nodeJs ${{ matrix.node }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node }}
+
+      - name: checkout
+        uses: actions/checkout@v3
+
+      - name: cache node_modules
+        id: node_modules_cache_id
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: ${{ matrix.os }}-node-v${{ matrix.node }}-deps-${{ hashFiles(format('{0}{1}', github.workspace, '/pnpm-lock.yaml')) }}
+
+      - name: pnpm install
+        if: steps.node_modules_cache_id.outputs.cache-hit != 'true'
+        run: pnpm install --frozen-lockfile
+
+      - name: lint test
+        run: pnpm lint:js
+
+      - name: typescript test
+        run: pnpm ts-test

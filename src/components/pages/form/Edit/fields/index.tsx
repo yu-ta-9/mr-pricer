@@ -48,11 +48,12 @@ const _Field: FC<Props> = ({ type, index, onDelete }) => {
           type: FieldType.SELECT,
           name,
           description,
-          options: fieldSelect?.fieldSelectOptions.map((option) => ({
-            id: option.id,
-            label: option.label,
-            price: option.price,
-          })),
+          options:
+            fieldSelect?.fieldSelectOptions.map((option) => ({
+              id: option.id,
+              label: option.label,
+              price: option.price,
+            })) || [],
         };
       } else {
         // MEMO: ltはこのタイミングで動的に生成する
@@ -60,12 +61,16 @@ const _Field: FC<Props> = ({ type, index, onDelete }) => {
           type: FieldType.NUMBER,
           name,
           description,
-          options: fieldNumber?.fieldNumberRanges.map((range, i) => ({
-            id: range.id,
-            price: range.price,
-            gte: i === 0 ? undefined : fieldNumber?.fieldNumberRanges[i - 1].lt,
-            lt: i !== fieldNumber?.fieldNumberRanges.length - 1 ? fieldNumber?.fieldNumberRanges[i].lt : undefined,
-          })),
+          options:
+            fieldNumber?.fieldNumberRanges.map((range, i) => ({
+              id: range.id,
+              price: range.price,
+              gte: i === 0 ? undefined : fieldNumber?.fieldNumberRanges[i - 1].lt || undefined,
+              lt:
+                i !== fieldNumber?.fieldNumberRanges.length - 1
+                  ? fieldNumber?.fieldNumberRanges[i].lt || undefined
+                  : undefined,
+            })) || [],
         };
       }
 
