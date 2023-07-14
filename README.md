@@ -4,6 +4,7 @@
 
 ```shell
 $ pnpm install
-$ pnpm db:generate
+$ pnpm db:generate:local
+$ pnpm db:push:local
 $ pnpm dev
 ```
