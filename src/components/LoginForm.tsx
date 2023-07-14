@@ -5,7 +5,13 @@ import { signIn } from 'next-auth/react';
 export const LoginForm = () => {
   return (
     <div className='flex flex-col items-center gap-4 font-mono'>
-      <h1 className='text-xl font-bold text-black'>Mr. Pricer</h1>
+      <div>
+        <img src='/images/icon.png' alt='' className='w-24 h-24' />
+      </div>
+      <div className='text-center'>
+        <h1 className='text-xl font-bold text-black'>Mr. Pricer</h1>
+        <p>（β版）</p>
+      </div>
       <button
         type='button'
         className='text-white w-full  bg-[#4285F4] hover:bg-[#4285F4]/90 focus:ring-4 focus:outline-none focus:ring-[#4285F4]/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center justify-between dark:focus:ring-[#4285F4]/55 mr-2 mb-2'
