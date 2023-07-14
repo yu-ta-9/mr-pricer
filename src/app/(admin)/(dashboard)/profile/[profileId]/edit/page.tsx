@@ -1,6 +1,5 @@
 import { Edit } from '@/components/pages/profile/Edit';
 import { prisma } from '@/lib/prisma';
-import { ToastProvider } from '@/providers/ToastProvider';
 import { getS3PresignedUrl } from '@/utils/aws/s3';
 import { getAuthenticateSession } from '@/utils/server/auth';
 
@@ -33,12 +32,7 @@ const EditPage = async ({ params }: { params: { profileId: string } }) => {
       }
     }
 
-    // TODO: 後で考える
-    return (
-      <ToastProvider>
-        <Edit profileData={profile} profileIconUrl={profileIconUrl} />
-      </ToastProvider>
-    );
+    return <Edit profileData={profile} profileIconUrl={profileIconUrl} />;
   } catch (err) {
     return {
       redirect: {
