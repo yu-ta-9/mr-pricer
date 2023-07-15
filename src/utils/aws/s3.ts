@@ -36,10 +36,13 @@ export const getS3PresignedUrl = async (userId: string, profileId: string, key: 
 export const uploadFileToS3 = async (file: File, userId: string, profileId: string, key: string) => {
   const client = new S3Client({
     region: 'ap-northeast-1',
-    credentials: {
-      accessKeyId: process.env.AWS_ACCESS_KEY,
-      secretAccessKey: process.env.AWS_SECRET_KEY,
-    },
+    credentials:
+      process.env.NODE_ENV !== 'production'
+        ? {
+            accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+            secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+          }
+        : undefined,
   });
 
   const data = await file.arrayBuffer();
@@ -59,10 +62,13 @@ export const uploadFileToS3 = async (file: File, userId: string, profileId: stri
 export const deleteFileOnS3 = async (userId: string, profileId: string, key: string) => {
   const client = new S3Client({
     region: process.env.AWS_REGION,
-    credentials: {
-      accessKeyId: process.env.AWS_ACCESS_KEY,
-      secretAccessKey: process.env.AWS_SECRET_KEY,
-    },
+    credentials:
+      process.env.NODE_ENV !== 'production'
+        ? {
+            accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+            secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+          }
+        : undefined,
   });
 
   await client.send(
