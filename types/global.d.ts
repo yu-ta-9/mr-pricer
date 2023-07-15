@@ -13,9 +13,9 @@ declare namespace NodeJS {
     /** DB URL */
     readonly DATABASE_URL: string;
     /** AWSのアクセスキー */
-    readonly AWS_ACCESS_KEY: string;
+    readonly AWS_ACCESS_KEY_ID: string;
     /** AWSのシークレット */
-    readonly AWS_SECRET_KEY: string;
+    readonly AWS_SECRET_ACCESS_KEY: string;
     /** AWSのリージョン */
     readonly AWS_REGION: string;
     /** s3 bucket name */
