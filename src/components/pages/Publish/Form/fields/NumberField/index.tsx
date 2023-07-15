@@ -13,7 +13,11 @@ type Props = {
 };
 
 const _NumberField: FC<Props> = ({ index, id, label }) => {
-  const { register, setValue } = useFormContext<postSchemaType>();
+  const {
+    register,
+    setValue,
+    formState: { errors },
+  } = useFormContext<postSchemaType>();
 
   useEffect(() => {
     setValue(`fields.${index}.id`, id);
@@ -25,6 +29,7 @@ const _NumberField: FC<Props> = ({ index, id, label }) => {
       label={label}
       type='number'
       placeholder='数値を入力'
+      error={errors.fields !== undefined ? errors.fields[index]?.value?.message : ''}
     />
   );
 };

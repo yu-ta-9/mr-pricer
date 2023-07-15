@@ -13,13 +13,24 @@ type Props = {
 };
 
 const _SelectField: FC<Props> = ({ index, id, label, options }) => {
-  const { register, setValue } = useFormContext<postSchemaType>();
+  const {
+    register,
+    setValue,
+    formState: { errors },
+  } = useFormContext<postSchemaType>();
 
   useEffect(() => {
     setValue(`fields.${index}.id`, id);
   }, [index, id, setValue]);
 
-  return <Select {...register(`fields.${index}.value`, { valueAsNumber: true })} label={label} options={options} />;
+  return (
+    <Select
+      {...register(`fields.${index}.value`, { valueAsNumber: true })}
+      label={label}
+      options={options}
+      error={errors.fields !== undefined ? errors.fields[index]?.value?.message : ''}
+    />
+  );
 };
 
 export const SelectField = memo(_SelectField);

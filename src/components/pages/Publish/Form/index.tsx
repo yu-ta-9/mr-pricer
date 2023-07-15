@@ -33,7 +33,7 @@ export const Form: FC = () => {
   const handleSubmit = async () => {
     await methods.trigger();
     if (!methods.formState.isValid) {
-      openToast('error', 'バリデーションエラーです');
+      openToast('error', '未入力の項目があります');
       return;
     }
 
