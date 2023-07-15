@@ -6,7 +6,7 @@ import type { Form, Field, FieldSelect, FieldSelectOption, FieldNumber, FieldNum
 export type FormForm = { profileId: number } & Form & {
     fields: (Field & {
       fieldSelect:
-        | (FieldSelect & {
+        | (FieldSelect & { deleteOptionIds?: number[] } & {
             fieldSelectOptions:
               | FieldSelectOption[]
               | (Omit<FieldSelectOption, 'id' | 'fieldSelectId' | 'createdAt' | 'updatedAt'> &
@@ -14,7 +14,7 @@ export type FormForm = { profileId: number } & Form & {
           })
         | null;
       fieldNumber:
-        | (FieldNumber & {
+        | (FieldNumber & { deleteOptionIds?: number[] } & {
             fieldNumberRanges:
               | FieldNumberRange[]
               | (Omit<FieldNumberRange, 'id' | 'fieldNumberId' | 'createdAt' | 'updatedAt'> &

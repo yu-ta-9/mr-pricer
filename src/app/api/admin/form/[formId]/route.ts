@@ -85,18 +85,14 @@ export async function PUT(req: Request, { params }: { params: { formId: string }
     );
   }
 
-  const form = await prisma.$transaction(async (tx) => {
-    // TODO: zennで書いてみる
-    const form = await tx.form.update({
-      where: { id: Number(params.formId) },
-      data: {
-        name: parsed.data.name,
-        description: parsed.data.description,
-        profileId: parsed.data.profileId,
-      },
-    });
-
-    return form;
+  // TODO: zennで書いてみる
+  const form = await prisma.form.update({
+    where: { id: Number(params.formId) },
+    data: {
+      name: parsed.data.name,
+      description: parsed.data.description,
+      profileId: parsed.data.profileId,
+    },
   });
 
   return NextResponse.json(form, {

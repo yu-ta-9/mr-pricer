@@ -54,6 +54,7 @@ const _Field: FC<Props> = ({ type, index, onDelete }) => {
               label: option.label,
               price: option.price,
             })) || [],
+          deleteOptionIds: fieldSelect?.deleteOptionIds || [],
         };
       } else {
         // MEMO: ltはこのタイミングで動的に生成する
@@ -71,6 +72,7 @@ const _Field: FC<Props> = ({ type, index, onDelete }) => {
                   ? fieldNumber?.fieldNumberRanges[i].lt || undefined
                   : undefined,
             })) || [],
+          deleteOptionIds: fieldNumber?.deleteOptionIds || [],
         };
       }
 

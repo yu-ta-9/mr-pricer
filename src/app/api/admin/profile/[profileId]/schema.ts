@@ -12,5 +12,6 @@ export const putSchema = z.object({
       }),
     )
     .optional(),
+  // TODO: numberで良いのでは？
   deleteProfileLinksIds: z.array(z.string().transform((v) => Number(v))).optional(),
 });

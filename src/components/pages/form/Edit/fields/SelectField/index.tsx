@@ -1,4 +1,5 @@
 import { TrashIcon, PlusIcon } from '@heroicons/react/24/solid';
+import { useMemo } from 'react';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 
 import { Button } from '@/components/ui/Button';
@@ -13,12 +14,28 @@ type Props = {
 };
 
 export const SelectField: FC<Props> = ({ index }) => {
-  const { register, control } = useFormContext<FormForm>();
+  const { register, control, setValue, getValues } = useFormContext<FormForm>();
   const fieldSelectOptions = useFieldArray({
     control,
     name: `fields.${index}.fieldSelect.fieldSelectOptions`,
     keyName: 'hookFormArrayKey',
   });
+
+  const isEnableDeleteOption = useMemo(() => fieldSelectOptions.fields.length > 1, [fieldSelectOptions.fields.length]);
+
+  const handleDeleteOption = (
+    i: number,
+    fieldSelectOption: NonNullable<FormForm['fields'][number]['fieldSelect']>['fieldSelectOptions'][number],
+  ) => {
+    fieldSelectOptions.remove(i);
+    // MEMO: 削除マーカーを付与
+    if (fieldSelectOption.id !== undefined) {
+      setValue(`fields.${index}.fieldSelect.deleteOptionIds`, [
+        ...(getValues(`fields.${index}.fieldSelect.deleteOptionIds`) || []),
+        fieldSelectOption.id,
+      ]);
+    }
+  };
 
   return (
     <>
@@ -41,14 +58,14 @@ export const SelectField: FC<Props> = ({ index }) => {
           />
 
           {/* TODO: やや強引な下揃え配置になっている */}
-          <IconButton
-            theme='danger'
-            className='self-end mb-1'
-            svgComponent={(className) => <TrashIcon className={className} />}
-            onClick={() => {
-              console.log('delete');
-            }}
-          />
+          {isEnableDeleteOption && (
+            <IconButton
+              theme='danger'
+              className='self-end mb-1'
+              svgComponent={(className) => <TrashIcon className={className} />}
+              onClick={() => handleDeleteOption(i, fieldSelectOption)}
+            />
+          )}
         </div>
       ))}
 
