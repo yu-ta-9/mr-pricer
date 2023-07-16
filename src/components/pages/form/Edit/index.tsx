@@ -11,12 +11,12 @@ import { Heading } from '@/components/ui/Heading';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
 import { useToast } from '@/hooks/useToast';
+import { FIELD_COUNT_LIMIT } from '@/utils/validation/field';
 
 import type { FormForm } from '@/components/pages/form/Edit/type';
 import type { Profile } from '@prisma/client';
 import type { FC } from 'react';
 import type { SubmitHandler } from 'react-hook-form';
-import { FIELD_COUNT_LIMIT } from '@/utils/validation/field';
 
 type Props = {
   formData: FormForm;
