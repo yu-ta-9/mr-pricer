@@ -5,6 +5,7 @@ import { useFieldArray, useFormContext } from 'react-hook-form';
 import { Button } from '@/components/ui/Button';
 import { IconButton } from '@/components/ui/IconButton';
 import { Input } from '@/components/ui/Input';
+import { FIELD_SELECT_OPTION_LIMIT } from '@/utils/validation/field';
 
 import type { FormForm } from '@/components/pages/form/Edit/type';
 import type { FC } from 'react';
@@ -79,7 +80,7 @@ export const SelectField: FC<Props> = ({ index }) => {
         追加
       </Button>
 
-      <p className='self-end text-black text-normal'>10個まで追加できます。</p>
+      <p className='self-end text-black text-normal'>{FIELD_SELECT_OPTION_LIMIT}個まで追加できます。</p>
     </>
   );
 };

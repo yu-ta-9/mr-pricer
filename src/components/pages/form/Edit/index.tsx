@@ -16,6 +16,7 @@ import type { FormForm } from '@/components/pages/form/Edit/type';
 import type { Profile } from '@prisma/client';
 import type { FC } from 'react';
 import type { SubmitHandler } from 'react-hook-form';
+import { FIELD_COUNT_LIMIT } from '@/utils/validation/field';
 
 type Props = {
   formData: FormForm;
@@ -171,7 +172,7 @@ export const Edit: FC<Props> = ({ formData, profilesData }) => {
           </Button>
         </div>
 
-        <p className='text-black text-normal'>20個まで追加できます。</p>
+        <p className='text-black text-normal'>{FIELD_COUNT_LIMIT}個まで追加できます。</p>
       </div>
     </FormProvider>
   );
