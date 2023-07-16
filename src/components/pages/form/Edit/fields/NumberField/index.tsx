@@ -1,5 +1,5 @@
 import { PlusIcon, TrashIcon } from '@heroicons/react/24/solid';
-import { Fragment, type FC } from 'react';
+import { Fragment, useMemo, type FC } from 'react';
 import { useFormContext, useFieldArray } from 'react-hook-form';
 
 import { Button } from '@/components/ui/Button';
@@ -25,12 +25,28 @@ const getRangeLabel = (index: number, length: number) => {
 };
 
 export const NumberField: FC<Props> = ({ index }) => {
-  const { register, control } = useFormContext<FormForm>();
+  const { register, control, setValue, getValues } = useFormContext<FormForm>();
   const fieldNumberRanges = useFieldArray({
     control,
     name: `fields.${index}.fieldNumber.fieldNumberRanges`,
     keyName: 'hookFormArrayKey',
   });
+
+  const isEnableDeleteOption = useMemo(() => fieldNumberRanges.fields.length > 2, [fieldNumberRanges.fields.length]);
+
+  const handleDeleteOption = (
+    i: number,
+    fieldNumberRange: NonNullable<FormForm['fields'][number]['fieldNumber']>['fieldNumberRanges'][number],
+  ) => {
+    fieldNumberRanges.remove(i);
+    // MEMO: 削除マーカーを付与
+    if (fieldNumberRange.id !== undefined) {
+      setValue(`fields.${index}.fieldNumber.deleteOptionIds`, [
+        ...(getValues(`fields.${index}.fieldNumber.deleteOptionIds`) || []),
+        fieldNumberRange.id,
+      ]);
+    }
+  };
 
   return (
     <>
@@ -61,14 +77,14 @@ export const NumberField: FC<Props> = ({ index }) => {
             />
 
             {/* TODO: やや強引な下揃え配置になっている */}
-            <IconButton
-              theme='danger'
-              className='self-end mb-1'
-              svgComponent={(className) => <TrashIcon className={className} />}
-              onClick={() => {
-                fieldNumberRanges.remove(i);
-              }}
-            />
+            {isEnableDeleteOption && (
+              <IconButton
+                theme='danger'
+                className='self-end mb-1'
+                svgComponent={(className) => <TrashIcon className={className} />}
+                onClick={() => handleDeleteOption(i, fieldNumberRange)}
+              />
+            )}
           </div>
         </Fragment>
       ))}

@@ -36,9 +36,16 @@ export const Edit: FC<Props> = ({ profileData, profileIconUrl }) => {
   const handleUploadImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files === null || e.target.files.length === 0) return;
 
+    const file = e.target.files[0];
+    if (file.size > 5 * 1000 * 1000) {
+      openToast('error', '5MB以下のみ登録可能です');
+      e.currentTarget.value = '';
+      return;
+    }
+
     try {
       const body = new FormData();
-      body.append('iconFile', e.target.files[0]);
+      body.append('iconFile', file);
 
       const profileId = profileFormMethods.getValues('id');
       const res = await fetch(`/api/admin/profile/${profileId}/icon`, {
@@ -55,6 +62,7 @@ export const Edit: FC<Props> = ({ profileData, profileIconUrl }) => {
       openToast('success', 'プロフィール画像を更新しました');
     } catch (err) {
       openToast('error', 'エラーが発生しました');
+      e.currentTarget.value = '';
     }
   };
 

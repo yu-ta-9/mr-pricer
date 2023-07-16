@@ -19,8 +19,8 @@ export const getS3PresignedUrl = async (userId: string, profileId: string, key: 
   const client = new S3Client({
     region: process.env.AWS_REGION,
     credentials: {
-      accessKeyId: process.env.AWS_ACCESS_KEY,
-      secretAccessKey: process.env.AWS_SECRET_KEY,
+      accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
     },
   });
   const command = new GetObjectCommand({
@@ -32,10 +32,10 @@ export const getS3PresignedUrl = async (userId: string, profileId: string, key: 
 
 export const uploadFileToS3 = async (file: File, userId: string, profileId: string, key: string) => {
   const client = new S3Client({
-    region: 'ap-northeast-1',
+    region: process.env.AWS_REGION,
     credentials: {
-      accessKeyId: process.env.AWS_ACCESS_KEY,
-      secretAccessKey: process.env.AWS_SECRET_KEY,
+      accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
     },
   });
 
@@ -57,8 +57,8 @@ export const deleteFileOnS3 = async (userId: string, profileId: string, key: str
   const client = new S3Client({
     region: process.env.AWS_REGION,
     credentials: {
-      accessKeyId: process.env.AWS_ACCESS_KEY,
-      secretAccessKey: process.env.AWS_SECRET_KEY,
+      accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
     },
   });
 

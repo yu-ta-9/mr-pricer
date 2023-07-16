@@ -14,11 +14,11 @@ import { z } from 'zod';
 // });
 
 export const postSchema = z.object({
-  friendlyKey: z.string(),
+  friendlyKey: z.string().nonempty({ message: '必須です' }),
   fields: z.array(
     z.object({
-      id: z.number(),
-      value: z.number(),
+      id: z.number({ required_error: '必須です', invalid_type_error: '必須です' }),
+      value: z.number({ required_error: '必須です', invalid_type_error: '必須です' }),
     }),
   ),
 });

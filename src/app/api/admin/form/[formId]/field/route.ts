@@ -45,14 +45,50 @@ export async function POST(req: Request, { params }: { params: { formId: string 
         ...(type === FieldType.SELECT
           ? {
               fieldSelect: {
-                create: {},
+                create: {
+                  fieldSelectOptions: {
+                    create: [
+                      {
+                        label: '項目1',
+                        price: 0,
+                      },
+                    ],
+                  },
+                },
               },
             }
           : {
               fieldNumber: {
-                create: {},
+                create: {
+                  fieldNumberRanges: {
+                    create: [
+                      {
+                        gte: undefined,
+                        lt: 1,
+                        price: 0,
+                      },
+                      {
+                        gte: 1,
+                        lt: undefined,
+                        price: 1,
+                      },
+                    ],
+                  },
+                },
               },
             }),
+      },
+      include: {
+        fieldSelect: {
+          include: {
+            fieldSelectOptions: true,
+          },
+        },
+        fieldNumber: {
+          include: {
+            fieldNumberRanges: true,
+          },
+        },
       },
     });
 

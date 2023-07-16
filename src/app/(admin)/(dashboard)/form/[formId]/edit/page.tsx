@@ -1,6 +1,5 @@
 import { Edit } from '@/components/pages/form/Edit';
 import { prisma } from '@/lib/prisma';
-import { ToastProvider } from '@/providers/ToastProvider';
 import { getAuthenticateSession } from '@/utils/server/auth';
 
 import type { Metadata } from 'next';
@@ -48,11 +47,7 @@ const EditPage = async ({ params }: { params: { formId: string } }) => {
     const profiles = await prisma.profile.findMany({ where: { userId: user.id }, orderBy: { id: 'asc' } });
 
     // TODO: 後で考える
-    return (
-      <ToastProvider>
-        <Edit formData={form as any} profilesData={profiles} />
-      </ToastProvider>
-    );
+    return <Edit formData={form as any} profilesData={profiles} />;
   } catch (err) {
     return {
       redirect: {

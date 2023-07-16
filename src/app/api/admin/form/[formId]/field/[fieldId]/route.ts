@@ -6,37 +6,7 @@ import { putSchema } from '@/app/api/admin/form/[formId]/field/[fieldId]/schema'
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { authForm } from '@/utils/auth/resources/form';
-
-/**
- * フィールド取得
- * TODO: 不要？
- */
-export async function GET(_request: Request, { params }: { params: { formId: string; fieldId: string } }) {
-  const session = await getServerSession(authOptions);
-  if (!session || session.user === undefined) {
-    return new Response(JSON.stringify({ message: 'You must be logged in.' }), {
-      status: 401,
-    });
-  }
-
-  await authForm(session.user.id, Number(params.formId));
-
-  try {
-    // TODO: zennで書いてみる
-    const field = await prisma.field.findFirstOrThrow({
-      where: {
-        id: Number(params.fieldId),
-        formId: Number(params.formId),
-      },
-    });
-
-    return NextResponse.json(field);
-  } catch (e) {
-    return new Response(JSON.stringify({ error: e }), {
-      status: 500,
-    });
-  }
-}
+import { HTTP_STATUS_CODE } from '@/utils/httpStatusCode';
 
 /**
  * フィールド更新
@@ -45,7 +15,7 @@ export async function PUT(req: Request, { params }: { params: { formId: string; 
   const session = await getServerSession(authOptions);
   if (!session || session.user === undefined) {
     return new Response(JSON.stringify({ message: 'You must be logged in.' }), {
-      status: 401,
+      status: HTTP_STATUS_CODE.UNAUTHORIZED,
     });
   }
 
@@ -60,7 +30,7 @@ export async function PUT(req: Request, { params }: { params: { formId: string; 
         issues: JSON.parse(parsed.error.message),
       }),
       {
-        status: 400,
+        status: HTTP_STATUS_CODE.BAD_REQUEST,
       },
     );
   }
@@ -76,8 +46,6 @@ export async function PUT(req: Request, { params }: { params: { formId: string; 
         fieldNumber: true,
       },
     });
-
-    // TODO: zennで書いてみる
 
     const updateField = await prisma.field.update({
       where: { id: field.id },
@@ -101,6 +69,7 @@ export async function PUT(req: Request, { params }: { params: { formId: string; 
                         price: option.price,
                       },
                     })),
+                    deleteMany: parsed.data.deleteOptionIds?.map((id) => ({ id })) || [],
                   },
                 },
               },
@@ -122,6 +91,7 @@ export async function PUT(req: Request, { params }: { params: { formId: string; 
                         price: option.price,
                       },
                     })),
+                    deleteMany: parsed.data.deleteOptionIds?.map((id) => ({ id })) || [],
                   },
                 },
               },
@@ -148,7 +118,7 @@ export async function PUT(req: Request, { params }: { params: { formId: string; 
     return NextResponse.json(updateField);
   } catch (e) {
     return new Response(JSON.stringify({ error: e }), {
-      status: 500,
+      status: HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR,
     });
   }
 }
