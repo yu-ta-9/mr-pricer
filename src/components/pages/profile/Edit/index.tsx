@@ -39,6 +39,7 @@ export const Edit: FC<Props> = ({ profileData, profileIconUrl }) => {
     const file = e.target.files[0];
     if (file.size > 5 * 1000 * 1000) {
       openToast('error', '5MB以下のみ登録可能です');
+      e.currentTarget.value = '';
       return;
     }
 
@@ -61,6 +62,7 @@ export const Edit: FC<Props> = ({ profileData, profileIconUrl }) => {
       openToast('success', 'プロフィール画像を更新しました');
     } catch (err) {
       openToast('error', 'エラーが発生しました');
+      e.currentTarget.value = '';
     }
   };
 
