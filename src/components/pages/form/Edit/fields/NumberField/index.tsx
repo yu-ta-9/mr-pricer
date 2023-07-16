@@ -5,6 +5,7 @@ import { useFormContext, useFieldArray } from 'react-hook-form';
 import { Button } from '@/components/ui/Button';
 import { IconButton } from '@/components/ui/IconButton';
 import { Input } from '@/components/ui/Input';
+import { FIELD_NUMBER_RANGE_LIMIT } from '@/utils/validation/field';
 
 import type { FormForm } from '@/components/pages/form/Edit/type';
 
@@ -106,7 +107,7 @@ export const NumberField: FC<Props> = ({ index }) => {
         追加
       </Button>
 
-      <p className='self-end text-black text-normal'>5個まで追加できます。</p>
+      <p className='self-end text-black text-normal'>{FIELD_NUMBER_RANGE_LIMIT}個まで追加できます。</p>
     </>
   );
 };

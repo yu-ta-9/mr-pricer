@@ -5,6 +5,7 @@ import { postSchema } from '@/app/api/admin/form/[formId]/field/schema';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { authForm } from '@/utils/auth/resources/form';
+import { FIELD_COUNT_LIMIT } from '@/utils/validation/field';
 
 /**
  * フィールド作成
@@ -36,6 +37,11 @@ export async function POST(req: Request, { params }: { params: { formId: string 
   const { type } = parsed.data;
 
   try {
+    const count = await prisma.field.count({ where: { formId: Number(params.formId) } });
+    if (count >= FIELD_COUNT_LIMIT) {
+      throw new Error('項目の作成上限に達しました。');
+    }
+
     const field = await prisma.field.create({
       data: {
         formId: Number(params.formId),

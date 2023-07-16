@@ -11,6 +11,7 @@ import { Heading } from '@/components/ui/Heading';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
 import { useToast } from '@/hooks/useToast';
+import { FIELD_COUNT_LIMIT } from '@/utils/validation/field';
 
 import type { FormForm } from '@/components/pages/form/Edit/type';
 import type { Profile } from '@prisma/client';
@@ -171,7 +172,7 @@ export const Edit: FC<Props> = ({ formData, profilesData }) => {
           </Button>
         </div>
 
-        <p className='text-black text-normal'>20個まで追加できます。</p>
+        <p className='text-black text-normal'>{FIELD_COUNT_LIMIT}個まで追加できます。</p>
       </div>
     </FormProvider>
   );
