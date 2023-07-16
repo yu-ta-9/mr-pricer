@@ -16,17 +16,13 @@ const getProfileIconS3Key = (userId: string, profileId: string, key: string) => 
  * @returns
  */
 export const getS3PresignedUrl = async (userId: string, profileId: string, key: string) => {
-  const client = new S3Client(
-    process.env.NODE_ENV !== 'production'
-      ? {
-          region: process.env.AWS_REGION,
-          credentials: {
-            accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-            secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-          },
-        }
-      : {},
-  );
+  const client = new S3Client({
+    region: process.env.AWS_REGION,
+    credentials: {
+      accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    },
+  });
   const command = new GetObjectCommand({
     Bucket: process.env.S3_BUCKET_NAME,
     Key: getProfileIconS3Key(userId, profileId, key),
@@ -35,17 +31,13 @@ export const getS3PresignedUrl = async (userId: string, profileId: string, key: 
 };
 
 export const uploadFileToS3 = async (file: File, userId: string, profileId: string, key: string) => {
-  const client = new S3Client(
-    process.env.NODE_ENV !== 'production'
-      ? {
-          region: process.env.AWS_REGION,
-          credentials: {
-            accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-            secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-          },
-        }
-      : {},
-  );
+  const client = new S3Client({
+    region: process.env.AWS_REGION,
+    credentials: {
+      accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    },
+  });
 
   const data = await file.arrayBuffer();
   await client.send(
@@ -62,17 +54,13 @@ export const uploadFileToS3 = async (file: File, userId: string, profileId: stri
  * S3からファイルを削除する
  */
 export const deleteFileOnS3 = async (userId: string, profileId: string, key: string) => {
-  const client = new S3Client(
-    process.env.NODE_ENV !== 'production'
-      ? {
-          region: process.env.AWS_REGION,
-          credentials: {
-            accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-            secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-          },
-        }
-      : {},
-  );
+  const client = new S3Client({
+    region: process.env.AWS_REGION,
+    credentials: {
+      accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    },
+  });
 
   await client.send(
     new DeleteObjectCommand({
