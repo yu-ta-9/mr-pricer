@@ -53,7 +53,7 @@
     "@storybook/blocks": "^7.0.20",
     "@storybook/nextjs": "^7.0.20",
     "@storybook/react": "^7.0.27",
-    "@storybook/testing-library": "^0.0.14-next.2",
+    "@storybook/testing-library": "^0.2.0",
     "@typescript-eslint/eslint-plugin": "^5.62.0",
     "@typescript-eslint/parser": "^5.59.8",
     "autoprefixer": "10.4.14",
