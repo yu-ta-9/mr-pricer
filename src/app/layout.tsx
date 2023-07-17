@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     images: ['https://www.mr-pricer.com/images/ogp.png'],
   },
   twitter: {
-    card: 'summary',
+    card: 'summary_large_image',
     title: 'Mr.Pricer',
     description: 'I`m Mr.Pricer. I`ll help you to find the best price.',
     images: ['https://www.mr-pricer.com/images/ogp.png'],
