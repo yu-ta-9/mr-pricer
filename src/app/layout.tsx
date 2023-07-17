@@ -10,7 +10,21 @@ const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: 'Mr.Pricer',
-  description: 'Mr.Pricer',
+  description: 'I`m Mr.Pricer. I`ll help you to find the best price.',
+  openGraph: {
+    url: 'https://www.mr-pricer.com',
+    type: 'website',
+    title: 'Mr.Pricer',
+    description: 'I`m Mr.Pricer. I`ll help you to find the best price.',
+    locale: 'ja_JP',
+    images: ['https://www.mr-pricer.com/images/ogp.png'],
+  },
+  twitter: {
+    card: 'summary',
+    title: 'Mr.Pricer',
+    description: 'I`m Mr.Pricer. I`ll help you to find the best price.',
+    images: ['https://www.mr-pricer.com/images/ogp.png'],
+  },
 };
 
 const RootLayout = ({ children }: { children: React.ReactNode }) => {
