@@ -29,6 +29,8 @@ export const metadata: Metadata = {
     title: 'Mr.Pricer',
     description: 'I`m Mr.Pricer. I`ll help you to find the best price.',
     images: ['https://www.mr-pricer.com/images/ogp.png'],
+    site: '@mrpricer_app',
+    creator: '@yuta9_drumming',
   },
   icons: {
     icon: [
