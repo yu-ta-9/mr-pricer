@@ -122,7 +122,7 @@ export const Edit: FC<Props> = ({ profileData, profileIconUrl }) => {
 
   return (
     <FormProvider {...profileFormMethods}>
-      <div className='flex flex-col items-start w-full max-w-5xl gap-4'>
+      <div className='flex flex-col items-start w-full gap-4 p-6 max-w-screen sm:p-12 sm:max-w-screen-xl'>
         <form
           className='flex flex-col items-start w-full max-w-5xl gap-4'
           onSubmit={profileFormMethods.handleSubmit(onSubmit)}

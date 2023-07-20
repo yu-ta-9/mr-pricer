@@ -150,7 +150,7 @@ export const DashBoard: FC<Props> = ({ formsData, profilesData }) => {
   };
 
   return (
-    <div className='flex flex-col items-start w-full max-w-5xl gap-4'>
+    <div className='flex flex-col items-start w-screen gap-4 p-6 max-w-screen sm:p-12 sm:max-w-screen-xl'>
       <Heading label='ダッシュボード' />
 
       <p className='text-sm font-bold text-black'>フォーム一覧</p>

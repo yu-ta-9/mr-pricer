@@ -22,7 +22,7 @@ export const Dashboard: FC<Props> = ({ children }) => {
 
       <Sidebar isOpen={isOpen} onDrawer={handleDrawer} />
 
-      <main className='min-h-screen p-12 min-w-min'>{children}</main>
+      <main className='min-h-screen min-w-min'>{children}</main>
     </>
   );
 };
