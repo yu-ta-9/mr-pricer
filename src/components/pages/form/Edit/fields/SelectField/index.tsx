@@ -76,6 +76,7 @@ export const SelectField: FC<Props> = ({ index }) => {
         type='button'
         svgComponent={(className) => <PlusIcon className={className} />}
         onClick={() => fieldSelectOptions.append({ label: '', price: 0 })}
+        disabled={fieldSelectOptions.fields.length >= FIELD_SELECT_OPTION_LIMIT}
       >
         追加
       </Button>

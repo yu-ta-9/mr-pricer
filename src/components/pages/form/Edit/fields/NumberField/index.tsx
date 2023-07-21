@@ -102,7 +102,7 @@ export const NumberField: FC<Props> = ({ index }) => {
             price: 0,
           });
         }}
-        disabled={fieldNumberRanges.fields.length >= 5}
+        disabled={fieldNumberRanges.fields.length >= FIELD_NUMBER_RANGE_LIMIT}
       >
         追加
       </Button>

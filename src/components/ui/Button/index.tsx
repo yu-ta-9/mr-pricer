@@ -14,11 +14,11 @@ type Props = {
 const themeClasses = (theme: ButtonTheme) => {
   switch (theme) {
     case 'primary':
-      return 'bg-primary hover:bg-opacity-50';
+      return 'bg-primary hover:bg-opacity-50 disabled:bg-opacity-50';
     case 'secondary':
-      return 'bg-secondary hover:bg-opacity-50';
+      return 'bg-secondary hover:bg-opacity-50 disabled:bg-opacity-50';
     case 'danger':
-      return 'bg-danger hover:bg-opacity-50';
+      return 'bg-danger hover:bg-opacity-50 disabled:bg-opacity-50';
   }
 };
 

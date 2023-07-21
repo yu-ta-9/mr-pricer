@@ -12,6 +12,7 @@ import { IconButton } from '@/components/ui/IconButton';
 import { Input } from '@/components/ui/Input';
 import { Textarea } from '@/components/ui/Textarea';
 import { useToast } from '@/hooks/useToast';
+import { PROFILE_LINK_COUNT_LIMIT } from '@/utils/validation/profile';
 
 import type { ProfileForm } from '@/components/pages/profile/Edit/type';
 import type { SubmitHandler } from 'react-hook-form';
@@ -199,9 +200,16 @@ export const Edit: FC<Props> = ({ profileData, profileIconUrl }) => {
             </div>
           ))}
 
-          <Button type='button' theme='primary' onClick={() => profileLinkFields.append({ label: '', url: '' })}>
+          <Button
+            type='button'
+            theme='primary'
+            onClick={() => profileLinkFields.append({ label: '', url: '' })}
+            disabled={profileLinkFields.fields.length >= PROFILE_LINK_COUNT_LIMIT}
+          >
             追加
           </Button>
+
+          <p className='text-black text-normal'>{PROFILE_LINK_COUNT_LIMIT}個まで追加できます。</p>
 
           <Button className='self-end' theme='primary' type='submit'>
             更新
