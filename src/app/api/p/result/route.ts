@@ -53,9 +53,27 @@ export async function POST(req: Request) {
       }
 
       switch (formField.type) {
-        case 'SELECT':
-          return sum + (formField.fieldSelect?.fieldSelectOptions.find((o) => o.id === field.value)?.price || 0);
-        case 'NUMBER':
+        case 'SELECT': {
+          // 複数選択
+          if (formField.fieldSelect?.isMulti) {
+            const value = field.value as number[];
+            return (
+              formField.fieldSelect?.fieldSelectOptions.reduce((sum, option) => {
+                if (value.includes(option.id)) {
+                  return sum + option.price;
+                }
+
+                return sum;
+              }, 0) || 0
+            );
+          }
+
+          // 単数選択
+          const value = field.value as number;
+          return sum + (formField.fieldSelect?.fieldSelectOptions.find((o) => o.id === value)?.price || 0);
+        }
+        case 'NUMBER': {
+          const value = field.value as number;
           return (
             sum +
             (formField.fieldNumber?.fieldNumberRanges.find((r) => {
@@ -64,11 +82,12 @@ export async function POST(req: Request) {
               // MEMO: 仕様上、gteとltが同時にnullになることはないのでキャストする
               if (r.gte === null) return field.value < (r as any).lt;
 
-              if (r.lt === null) return r.gte <= field.value;
+              if (r.lt === null) return r.gte <= value;
 
-              return r.gte <= field.value && field.value < r.lt;
+              return r.gte <= value && value < r.lt;
             })?.price || 0)
           );
+        }
         default:
           return sum;
       }

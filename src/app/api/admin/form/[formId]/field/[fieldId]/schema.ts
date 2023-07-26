@@ -8,6 +8,7 @@ export const putSchema = z.discriminatedUnion('type', [
     type: z.literal(FieldType.SELECT),
     name: z.string(),
     description: z.string().optional().nullable(), // TODO: 不要かも
+    isMulti: z.boolean(),
     options: z
       .array(z.object({ id: z.number().int().optional(), label: z.string(), price: z.number().int().gte(0) }))
       .min(1)

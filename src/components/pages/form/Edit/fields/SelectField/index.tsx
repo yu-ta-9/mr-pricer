@@ -1,10 +1,11 @@
 import { TrashIcon, PlusIcon } from '@heroicons/react/24/solid';
 import { useMemo } from 'react';
-import { useFieldArray, useFormContext } from 'react-hook-form';
+import { Controller, useFieldArray, useFormContext } from 'react-hook-form';
 
 import { Button } from '@/components/ui/Button';
 import { IconButton } from '@/components/ui/IconButton';
 import { Input } from '@/components/ui/Input';
+import { ToggleButton } from '@/components/ui/ToggleButton';
 import { FIELD_SELECT_OPTION_LIMIT } from '@/utils/validation/field';
 
 import type { FormForm } from '@/components/pages/form/Edit/type';
@@ -41,6 +42,20 @@ export const SelectField: FC<Props> = ({ index }) => {
   return (
     <>
       <Input {...register(`fields.${index}.name`)} label='設問名' type='text' placeholder='設問名を入力' />
+
+      <Controller
+        control={control}
+        name={`fields.${index}.fieldSelect.isMulti`}
+        render={({ field: { value, onChange } }) => (
+          <ToggleButton
+            label='複数選択可'
+            isOn={value}
+            onToggle={() => {
+              onChange(!value);
+            }}
+          />
+        )}
+      />
 
       {fieldSelectOptions.fields.map((fieldSelectOption, i) => (
         <div key={fieldSelectOption.hookFormArrayKey} className='flex items-center gap-2'>

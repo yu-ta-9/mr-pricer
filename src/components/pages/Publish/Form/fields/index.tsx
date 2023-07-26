@@ -22,6 +22,7 @@ const _Field: FC<Props> = ({ field, index }) => {
               value: String(option.id),
             })) || []
           }
+          isMulti={field.fieldSelect?.isMulti || false}
         />
       );
     case 'NUMBER':

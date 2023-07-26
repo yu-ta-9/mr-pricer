@@ -48,6 +48,7 @@ const _Field: FC<Props> = ({ type, index, onDelete }) => {
           type: FieldType.SELECT,
           name,
           description,
+          isMulti: fieldSelect?.isMulti || false,
           options:
             fieldSelect?.fieldSelectOptions.map((option) => ({
               id: option.id,
