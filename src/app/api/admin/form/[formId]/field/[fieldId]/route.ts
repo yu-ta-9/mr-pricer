@@ -57,6 +57,7 @@ export async function PUT(req: Request, { params }: { params: { formId: string; 
           ? {
               fieldSelect: {
                 update: {
+                  isMulti: parsed.data.isMulti,
                   fieldSelectOptions: {
                     upsert: parsed.data.options?.map((option) => ({
                       where: { id: option.id || 0 },
@@ -149,53 +150,3 @@ export async function DELETE(_request: Request, { params }: { params: { formId: 
     });
   }
 }
-
-/** ↓ TODO: トランザクションver */
-
-// const updateFieldSelectOptions =
-//   parsed.data.type === FieldType.SELECT
-//     ? parsed.data.options?.map((option) =>
-//         prisma.fieldSelectOption.upsert({
-//           where: {
-//             id: option.id || 0,
-//           },
-//           create: {
-//             fieldSelectId: field.fieldSelect!.id,
-//             label: option.label,
-//             price: option.price,
-//           },
-//           update: {
-//             fieldSelectId: field.fieldSelect!.id,
-//             label: option.label,
-//             price: option.price,
-//           },
-//         }),
-//       ) || []
-//     : [];
-
-// const updateFieldNumberRanges =
-//   parsed.data.type === FieldType.NUMBER
-//     ? parsed.data.options?.map((option) =>
-//         prisma.fieldNumberRange.upsert({
-//           where: {
-//             id: option.id || 0,
-//           },
-//           create: {
-//             fieldNumberId: field.fieldNumber!.id,
-//             price: option.price,
-//             gte: option.gte,
-//             lt: option.lt,
-//           },
-//           update: {
-//             fieldNumberId: field.fieldNumber!.id,
-//             price: option.price,
-//             gte: option.gte,
-//             lt: option.lt,
-//           },
-//         }),
-//       ) || []
-//     : [];
-
-// console.log(updateField, updateFieldSelectOptions, field.fieldSelect!.id, updateFieldNumberRanges);
-
-// const result = await prisma.$transaction([updateField, ...updateFieldSelectOptions, ...updateFieldNumberRanges]);

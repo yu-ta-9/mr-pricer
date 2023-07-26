@@ -27,6 +27,11 @@ body {
 
 /* custom classes */
 
+/** react-select用、focus時のoutlineを無くす */
+input[id^='react-select-'] {
+  @apply focus:outline-none focus:border-transparent focus:ring-0;
+}
+
 @keyframes toast-show {
   from {
     transform: translate(100%, 0);
@@ -87,5 +92,44 @@ body {
 
   .toast-hide {
     animation-name: toast-hide;
+  }
+
+  .toggle-button {
+    @apply rounded-full bg-base-secondary;
+
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+    border-radius: 12px;
+    transition: all 0.3s ease-out;
+
+    &.-on {
+      @apply bg-primary;
+    }
+
+    > .icon {
+      @apply bg-white;
+
+      position: absolute;
+      top: 50%;
+      left: 0%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 20px;
+      height: 20px;
+      padding: 3px;
+      margin: 0 2px;
+      cursor: pointer;
+      border-radius: 50%;
+      transition: all 0.3s ease-out;
+      transform: translate(0%, -50%);
+
+      &.-on {
+        /* TODO: widthが固定されてしまっている設計を直したい */
+        transform: translate(100%, -50%);
+      }
+    }
   }
 }
