@@ -1,15 +1,23 @@
-import { useArgs } from '@storybook/client-api';
+import { useState } from 'react';
 
 import { ToggleButton } from '.';
 
-import type { ComponentMeta, ComponentStory } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react';
 
-export default {
+const meta: Meta<typeof ToggleButton> = {
   component: ToggleButton,
-} as ComponentMeta<typeof ToggleButton>;
+} as Meta<typeof ToggleButton>;
 
-export const Template: ComponentStory<typeof ToggleButton> = (_args) => {
-  const [args, updateArgs] = useArgs();
+export default meta;
+type Story = StoryObj<typeof ToggleButton>;
 
-  return <ToggleButton isOn={args.isOn} onToggle={(): void => updateArgs({ isOn: !args.isOn })} />;
+export const Template: Story = {
+  args: {
+    label: 'Label',
+  },
+  render: function Comp({ ...args }) {
+    const [isOn, setIsOn] = useState(false);
+
+    return <ToggleButton {...args} isOn={isOn} onToggle={() => setIsOn((prev) => !prev)}></ToggleButton>;
+  },
 };
