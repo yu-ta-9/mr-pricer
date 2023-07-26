@@ -103,6 +103,7 @@ model FieldSelect {
   id            Int    @id @default(autoincrement())
   field         Field  @relation(fields: [fieldId], references: [id], onDelete: Cascade)
   fieldId       Int    @map("field_id") @unique
+  isMulti      Boolean @map("is_multi") @default(false)
   createdAt  DateTime @default(now()) @map("created_at")
   updatedAt  DateTime @updatedAt @map("updated_at")
 
