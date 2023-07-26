@@ -31,14 +31,15 @@ const _SelectField: FC<Props> = ({ index, id, label, options, isMulti }) => {
       <Controller
         control={control}
         name={`fields.${index}.value`}
-        render={({ field, fieldState }) => (
+        // MEMO: 現状のvalueの型だとonChangeが上手くハマらないので分割代入で回避している
+        render={({ field: { ref, name, onBlur, value, onChange }, fieldState }) => (
           <SelectMulti
-            {...field}
-            value={options.filter((option) =>
-              Array.isArray(field.value) ? field.value.includes(Number(option.value)) : false,
-            )}
+            ref={ref}
+            name={name}
+            onBlur={onBlur}
+            value={options.filter((option) => (Array.isArray(value) ? value.includes(Number(option.value)) : false))}
             onOptionChange={(newValue) => {
-              field.onChange(newValue.map((option) => Number(option.value)));
+              onChange(newValue.map((option) => Number(option.value)));
             }}
             label={label}
             options={options}
