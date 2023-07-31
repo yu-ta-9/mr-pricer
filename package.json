@@ -68,6 +68,6 @@
     "eslint-plugin-unused-imports": "^2.0.0",
     "postcss": "8.4.24",
     "prisma": "^4.15.0",
-    "storybook": "^7.0.20"
+    "storybook": "^7.1.1"
   }
 }
