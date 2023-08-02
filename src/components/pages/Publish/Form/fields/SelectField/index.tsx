@@ -1,20 +1,21 @@
-import { memo, type FC, useEffect } from 'react';
+import { memo, type FC, useEffect, useMemo } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 
+import { getRecursiveError } from '@/components/pages/Publish/utils/hookForm';
 import { Select } from '@/components/ui/Select';
 import { SelectMulti } from '@/components/ui/SelectMulti';
 
 import type { postSchemaType } from '@/app/api/p/result/schema';
 
 type Props = {
-  index: number;
   id: number;
+  name: `fields.${number}`;
   label: string;
   options: { label: string; value: string }[];
   isMulti: boolean;
 };
 
-const _SelectField: FC<Props> = ({ index, id, label, options, isMulti }) => {
+const _SelectField: FC<Props> = ({ id, name, label, options, isMulti }) => {
   const {
     register,
     control,
@@ -23,14 +24,16 @@ const _SelectField: FC<Props> = ({ index, id, label, options, isMulti }) => {
   } = useFormContext<postSchemaType>();
 
   useEffect(() => {
-    setValue(`fields.${index}.id`, id);
-  }, [index, id, setValue]);
+    setValue(`${name}.id`, id);
+  }, [name, id, setValue]);
+
+  const error = useMemo(() => getRecursiveError(name, errors), [name, errors]);
 
   if (isMulti) {
     return (
       <Controller
         control={control}
-        name={`fields.${index}.value`}
+        name={`${name}.value`}
         // MEMO: 現状のvalueの型だとonChangeが上手くハマらないので分割代入で回避している
         render={({ field: { ref, name, onBlur, value, onChange }, fieldState }) => (
           <SelectMulti
@@ -53,11 +56,11 @@ const _SelectField: FC<Props> = ({ index, id, label, options, isMulti }) => {
 
   return (
     <Select
-      {...register(`fields.${index}.value`, { valueAsNumber: true })}
+      {...register(`${name}.value`, { valueAsNumber: true })}
       label={label}
       options={options}
       placeholder='選択'
-      error={errors.fields !== undefined ? errors.fields[index]?.value?.message : ''}
+      error={error !== undefined ? error.value?.message : ''}
     />
   );
 };

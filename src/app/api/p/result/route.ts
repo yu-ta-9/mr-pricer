@@ -41,6 +41,11 @@ export async function POST(req: Request) {
                 fieldNumberRanges: true,
               },
             },
+            fieldCondition: {
+              include: {
+                fieldConditionBranches: true,
+              },
+            },
           },
         },
       },
@@ -88,6 +93,11 @@ export async function POST(req: Request) {
             })?.price || 0)
           );
         }
+        case 'CONDITION':
+          // TODO: 実装
+          // const value = field.value as number;
+          // field.fields.filter(field => field.)
+          return 0;
         default:
           return sum;
       }

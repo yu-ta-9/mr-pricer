@@ -1,131 +1,163 @@
 import { TrashIcon } from '@heroicons/react/24/solid';
 import { FieldType } from '@prisma/client';
-import { memo } from 'react';
-import { useFormContext } from 'react-hook-form';
+import { memo, useMemo, useState } from 'react';
+import { Controller, useFormContext } from 'react-hook-form';
 
+import { ConditionField } from '@/components/pages/form/Edit/fields/ConditionField';
 import { NumberField } from '@/components/pages/form/Edit/fields/NumberField';
 import { SelectField } from '@/components/pages/form/Edit/fields/SelectField';
-import { Button } from '@/components/ui/Button';
 import { IconButton } from '@/components/ui/IconButton';
-import { useToast } from '@/hooks/useToast';
+import { SelectMulti } from '@/components/ui/SelectMulti';
 
-import type { putSchemaType } from '@/app/api/admin/form/[formId]/field/[fieldId]/schema';
-import type { FormForm } from '@/components/pages/form/Edit/type';
+import type { ReactSelectOption } from '../../../../../../types/react-select';
+import type { FormForm, ParsedField } from '@/components/pages/form/Edit/type';
 import type { FC } from 'react';
 
-type Props = { type: FieldType; index: number; onDelete: (index: number) => void };
+type ConditionParams = {
+  field: ParsedField;
+  conditionFieldIndexes: number[];
+};
 
-const getField = (type: FieldType, index: number) => {
+type Props = {
+  field: ParsedField;
+  index: number;
+  onDelete: (index: number) => void;
+  conditionParams?: ConditionParams;
+};
+
+const getField = (type: FieldType, index: number, field: ParsedField, conditionFieldIndexes: number[]) => {
   switch (type) {
     case FieldType.SELECT:
-      return <SelectField index={index} />;
+      return <SelectField name={getFieldNamePrefix(index, conditionFieldIndexes)} />;
     case FieldType.NUMBER:
-      return <NumberField index={index} />;
+      return <NumberField name={getFieldNamePrefix(index, conditionFieldIndexes)} />;
+    case FieldType.CONDITION:
+      return (
+        <ConditionField
+          index={index}
+          name={getFieldNamePrefix(index, conditionFieldIndexes)}
+          field={field}
+          conditionFieldIndexes={conditionFieldIndexes}
+        />
+      );
   }
 };
 
-const getFieldName = (type: FieldType) => {
+const getFieldLabel = (type: FieldType) => {
   switch (type) {
     case FieldType.SELECT:
       return '選択入力';
     case FieldType.NUMBER:
       return '数値入力';
+    case FieldType.CONDITION:
+      return '条件分岐';
   }
 };
 
-const _Field: FC<Props> = ({ type, index, onDelete }) => {
-  const { openToast } = useToast();
-  const { getValues, setValue } = useFormContext<FormForm>();
+/**
+ * 再起的にhook-formの型付けを利用するためにキャストを活用する
+ * ref: https://wanago.io/2022/05/16/recursive-dynamic-forms-react-hook-form-typescript/
+ */
+const getFieldNamePrefix = (index: number, conditionFieldIndexes: number[]): `fields.${number}` => {
+  if (conditionFieldIndexes.length === 0) {
+    return `fields.${index}`;
+  }
 
-  const handleUpdate = async () => {
-    try {
-      const fieldValue = getValues(`fields.${index}`);
-      const { name, description, type, fieldSelect, fieldNumber } = fieldValue;
+  let name = '';
+  conditionFieldIndexes.forEach((fieldIndex) => {
+    name += `fields.${fieldIndex}`;
+  });
+  name += `.fields.${index}`;
+  return name as `fields.${number}`;
+};
 
-      let param: putSchemaType;
-      if (type === FieldType.SELECT) {
-        param = {
-          type: FieldType.SELECT,
-          name,
-          description,
-          isMulti: fieldSelect?.isMulti || false,
-          options:
-            fieldSelect?.fieldSelectOptions.map((option) => ({
-              id: option.id,
-              label: option.label,
-              price: option.price,
-            })) || [],
-          deleteOptionIds: fieldSelect?.deleteOptionIds || [],
-        };
-      } else {
-        // MEMO: ltはこのタイミングで動的に生成する
-        param = {
-          type: FieldType.NUMBER,
-          name,
-          description,
-          options:
-            fieldNumber?.fieldNumberRanges.map((range, i) => ({
-              id: range.id,
-              price: range.price,
-              gte: i === 0 ? undefined : fieldNumber?.fieldNumberRanges[i - 1].lt || undefined,
-              lt:
-                i !== fieldNumber?.fieldNumberRanges.length - 1
-                  ? fieldNumber?.fieldNumberRanges[i].lt || undefined
-                  : undefined,
-            })) || [],
-          deleteOptionIds: fieldNumber?.deleteOptionIds || [],
-        };
-      }
+const _Field: FC<Props> = ({ field, index, onDelete, conditionParams }) => {
+  const { formId, type } = field;
+  const isInBranch = conditionParams !== undefined;
 
-      const res = await fetch(`/api/admin/form/${getValues('id')}/field/${getValues(`fields.${index}.id`)}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(param),
-      });
+  const { control } = useFormContext<FormForm>();
+  const indexLabel = useMemo(
+    () =>
+      isInBranch
+        ? `${(conditionParams.conditionFieldIndexes[conditionParams.conditionFieldIndexes.length - 1] || 0) + 1} - ${
+            index + 1
+          }`
+        : index + 1,
+    [isInBranch, conditionParams?.conditionFieldIndexes, index],
+  );
 
-      if (!res.ok) throw new Error('error');
-
-      // MEMO: 各オプションにidを付与し、増分判定から除外できるようにする
-      const data = await res.json();
-      if (type === FieldType.SELECT) {
-        const newFieldSelectOptionValue = fieldSelect?.fieldSelectOptions.map((option, i) => ({
-          ...option,
-          id: data.fieldSelect.fieldSelectOptions[i].id,
-        }));
-
-        setValue(`fields.${index}.fieldSelect.fieldSelectOptions`, newFieldSelectOptionValue || []);
-      }
-
-      if (type === FieldType.NUMBER) {
-        const newFieldSelectOptionValue = fieldNumber?.fieldNumberRanges.map((range, i) => ({
-          ...range,
-          id: data.fieldNumber.fieldNumberRanges[i].id,
-        }));
-
-        setValue(`fields.${index}.fieldNumber.fieldNumberRanges`, newFieldSelectOptionValue || []);
-      }
-
-      openToast('success', 'フィールドを更新しました');
-    } catch (err) {
-      openToast('error', 'エラーが発生しました');
-    }
-  };
+  const [conditionOptions, setConditionOptions] = useState<ReactSelectOption[]>(
+    conditionParams?.field.fieldCondition?.fieldConditionBranches.map((fieldConditionBranch) => ({
+      label: fieldConditionBranch.label,
+      value: fieldConditionBranch.id,
+    })) || [],
+  );
 
   return (
     <div className='relative flex flex-col w-full gap-4 p-4 border-2 rounded border-primary'>
-      {getField(type, index)}
+      {isInBranch && (
+        <>
+          <Controller
+            control={control}
+            name={`${getFieldNamePrefix(index, conditionParams.conditionFieldIndexes)}.fieldConditionBranches`}
+            // MEMO: 現状のvalueの型だとonChangeが上手くハマらないので分割代入で回避している
+            render={({ field: { ref, name, onBlur, value, onChange }, fieldState }) => (
+              <SelectMulti
+                ref={ref}
+                name={name}
+                onBlur={onBlur}
+                options={conditionOptions}
+                backspaceRemovesValue={false}
+                isClearable={false}
+                value={
+                  conditionOptions.filter((option) =>
+                    value.map((v) => v.fieldConditionBranchId).includes(option.value as number),
+                  ) || []
+                }
+                onOptionChange={(newValue) => {
+                  onChange(newValue.map((option) => ({ fieldConditionBranchId: option.value as number })));
+                }}
+                onFocus={async () => {
+                  try {
+                    const data = await fetch(
+                      `/api/admin/form/${formId}/field/${conditionParams.field.id}/field_condition/field_condition_branch`,
+                    );
+                    const json = await data.json();
+
+                    setConditionOptions(
+                      json?.map((data: any) => ({
+                        label: data.label,
+                        value: data.id,
+                      })),
+                    );
+                  } catch {
+                    console.error('options fetch failed');
+                  }
+                }}
+                label='表示条件'
+                placeholder='表示条件を選択してください'
+                error={fieldState.error?.message ? fieldState.error.message : undefined}
+              />
+            )}
+          />
+        </>
+      )}
+
+      {getField(type, index, field, conditionParams?.conditionFieldIndexes || [])}
+
+      {/** MEMO: 以下absoluteな要素群 */}
 
       <div className='absolute top-0 left-0 flex items-center gap-2 -translate-x-[16px] -translate-y-1/2'>
-        <div className='flex items-center justify-center w-8 h-8 text-white rounded-full bg-primary'>{index + 1}</div>
+        <div
+          className={`flex items-center justify-center text-white rounded-full bg-primary h-8 ${
+            isInBranch ? 'break-keep w-fit px-2' : 'w-8'
+          }`}
+        >
+          {indexLabel}
+        </div>
 
-        <p className='pl-2 pr-2 font-semibold bg-white'>{getFieldName(type)}</p>
+        <p className='pl-2 pr-2 font-semibold bg-white'>{getFieldLabel(type)}</p>
       </div>
-
-      <Button theme='primary' type='button' onClick={handleUpdate}>
-        更新
-      </Button>
 
       <div className='absolute top-0 right-0 flex items-center gap-2 text-white translate-x-[16px] -translate-y-1/2 rounded-full'>
         {/* TODO: 順序並び替え機能を実装したら繋ぎ込む */}

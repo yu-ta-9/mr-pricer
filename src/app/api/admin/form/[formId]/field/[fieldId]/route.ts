@@ -47,73 +47,135 @@ export async function PUT(req: Request, { params }: { params: { formId: string; 
       },
     });
 
-    const updateField = await prisma.field.update({
-      where: { id: field.id },
-      data: {
-        name: parsed.data.name,
-        description: parsed.data.description,
-        type: parsed.data.type,
-        ...(parsed.data.type === FieldType.SELECT
-          ? {
-              fieldSelect: {
-                update: {
-                  isMulti: parsed.data.isMulti,
-                  fieldSelectOptions: {
-                    upsert: parsed.data.options?.map((option) => ({
-                      where: { id: option.id || 0 },
-                      create: {
-                        label: option.label,
-                        price: option.price,
-                      },
-                      update: {
-                        label: option.label,
-                        price: option.price,
-                      },
-                    })),
-                    deleteMany: parsed.data.deleteOptionIds?.map((id) => ({ id })) || [],
-                  },
-                },
+    const updateField = await prisma.$transaction(async (tx) => {
+      if (parsed.data.fieldConditionBranchIds !== undefined) {
+        // 条件分岐付与
+        parsed.data.fieldConditionBranchIds?.map(async (id) => {
+          await tx.fieldConditionBranchesOnFields.upsert({
+            where: {
+              fieldConditionBranchId_fieldId: {
+                fieldId: field.id,
+                fieldConditionBranchId: id,
               },
-            }
-          : {
-              fieldNumber: {
-                update: {
-                  fieldNumberRanges: {
-                    upsert: parsed.data.options?.map((option) => ({
-                      where: { id: option.id || 0 }, // MEMO: undefinedを渡すとエラーになるのであり得ない数を入れる
-                      create: {
-                        gte: option.gte || null,
-                        lt: option.lt || null,
-                        price: option.price,
-                      },
-                      update: {
-                        gte: option.gte || null,
-                        lt: option.lt || null,
-                        price: option.price,
-                      },
-                    })),
-                    deleteMany: parsed.data.deleteOptionIds?.map((id) => ({ id })) || [],
-                  },
-                },
-              },
-            }),
-      },
-      include: {
-        ...(parsed.data.type === FieldType.SELECT && {
-          fieldSelect: {
-            include: {
-              fieldSelectOptions: true,
+            },
+            create: {
+              fieldId: field.id,
+              fieldConditionBranchId: id,
+            },
+            update: {},
+          });
+        });
+
+        await tx.fieldConditionBranchesOnFields.deleteMany({
+          where: {
+            fieldId: field.id,
+            fieldConditionBranchId: {
+              notIn: parsed.data.fieldConditionBranchIds || [],
             },
           },
-        }),
-        ...(parsed.data.type === FieldType.NUMBER && {
-          fieldNumber: {
-            include: {
-              fieldNumberRanges: true,
+        });
+      }
+
+      // フィールド更新
+      const updateField = await tx.field.update({
+        where: { id: field.id },
+        data: {
+          name: parsed.data.name,
+          description: parsed.data.description,
+          type: parsed.data.type,
+          ...(parsed.data.type === FieldType.SELECT
+            ? {
+                fieldSelect: {
+                  update: {
+                    isMulti: parsed.data.isMulti,
+                    fieldSelectOptions: {
+                      upsert: parsed.data.options?.map((option) => ({
+                        where: { id: option.id || 0 },
+                        create: {
+                          label: option.label,
+                          price: option.price,
+                        },
+                        update: {
+                          label: option.label,
+                          price: option.price,
+                        },
+                      })),
+                      deleteMany: parsed.data.deleteOptionIds?.map((id) => ({ id })) || [],
+                    },
+                  },
+                },
+              }
+            : parsed.data.type === FieldType.NUMBER
+            ? {
+                fieldNumber: {
+                  update: {
+                    fieldNumberRanges: {
+                      upsert: parsed.data.options?.map((option) => ({
+                        where: { id: option.id || 0 }, // MEMO: undefinedを渡すとエラーになるのであり得ない数を入れる
+                        create: {
+                          gte: option.gte || null,
+                          lt: option.lt || null,
+                          price: option.price,
+                        },
+                        update: {
+                          gte: option.gte || null,
+                          lt: option.lt || null,
+                          price: option.price,
+                        },
+                      })),
+                      deleteMany: parsed.data.deleteOptionIds?.map((id) => ({ id })) || [],
+                    },
+                  },
+                },
+              }
+            : parsed.data.type === FieldType.CONDITION
+            ? {
+                fieldCondition: {
+                  update: {
+                    fieldConditionBranches: {
+                      upsert: parsed.data.options?.map((option) => ({
+                        where: { id: option.id || 0 }, // MEMO: undefinedを渡すとエラーになるのであり得ない数を入れる
+                        create: {
+                          label: option.label,
+                        },
+                        update: {
+                          label: option.label,
+                        },
+                      })),
+                      deleteMany: parsed.data.deleteOptionIds?.map((id) => ({ id })) || [],
+                    },
+                  },
+                },
+              }
+            : undefined),
+        },
+        include: {
+          fieldConditionBranches: true,
+          ...(parsed.data.type === FieldType.SELECT && {
+            fieldSelect: {
+              include: {
+                fieldSelectOptions: true,
+              },
             },
-          },
-        }),
-      },
+          }),
+          ...(parsed.data.type === FieldType.NUMBER && {
+            fieldNumber: {
+              include: {
+                fieldNumberRanges: true,
+              },
+            },
+          }),
+          ...(parsed.data.type === FieldType.CONDITION && {
+            fieldCondition: {
+              include: {
+                fieldConditionBranches: true,
+              },
+            },
+          }),
+        },
+      });
+
+      return updateField;
     });
 
     return NextResponse.json(updateField);
@@ -137,7 +199,6 @@ export async function DELETE(_request: Request, { params }: { params: { formId: 
 
   await authForm(session.user.id, Number(params.formId));
 
-  // TODO: zennで書いてみる
   try {
     await prisma.field.deleteMany({
       where: { id: Number(params.fieldId), formId: Number(params.formId) },

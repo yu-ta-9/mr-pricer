@@ -16,7 +16,7 @@ import type { FC } from 'react';
 
 export const Form: FC = () => {
   const { openToast } = useToast();
-  const { formData } = usePublishPageContext();
+  const { formData, calculate } = usePublishPageContext();
   const methods = useForm<postSchemaType>({
     resolver: zodResolver(postSchema),
     mode: 'onChange',
@@ -33,25 +33,28 @@ export const Form: FC = () => {
   const handleSubmit = async () => {
     await methods.trigger();
     if (!methods.formState.isValid) {
+      // TODO: 条件分岐に基づくバリデーションを作る
       openToast('error', '未入力の項目があります');
       return;
     }
 
     setIsCalculating(true);
-    setResult(undefined);
 
+    // 見積もり計算
     const data = methods.getValues();
+    const result = calculate(data);
 
-    const res = await fetch('/api/p/result', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ friendlyKey: data.friendlyKey, fields: data.fields }),
-    });
-    const json = await res.json();
+    // TODO: API不要になったら消す
+    // const res = await fetch('/api/p/result', {
+    //   method: 'POST',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //   },
+    //   body: JSON.stringify({ friendlyKey: data.friendlyKey, fields: data.fields }),
+    // });
+    // const json = await res.json();
 
-    setResult(json.result);
+    setResult(result);
     setIsCalculating(false);
   };
 
@@ -61,7 +64,7 @@ export const Form: FC = () => {
         <Heading label='依頼したい内容を入力してください' />
 
         {formData?.fields.map((field, i) => (
-          <Field key={field.id} index={i} field={field} />
+          <Field key={field.id} index={i} field={field} conditionFieldIndexes={[]} />
         ))}
 
         {result === undefined ? (

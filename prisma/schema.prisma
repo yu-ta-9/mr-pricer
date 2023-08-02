@@ -89,13 +89,19 @@ model Field {
   createdAt  DateTime @default(now()) @map("created_at")
   updatedAt  DateTime @updatedAt @map("updated_at")
 
+  parentFieldConditionId Int? @map("parent_field_condition_id")
+  parentFieldCondition   FieldCondition? @relation("parent_field_condition", fields: [parentFieldConditionId], references: [id], onDelete: Cascade)
+
   fieldSelect   FieldSelect?
   fieldNumber   FieldNumber?
+  fieldCondition   FieldCondition?
+  fieldConditionBranches   FieldConditionBranchesOnFields[]
 }
 
 enum FieldType {
   SELECT
   NUMBER
+  CONDITION
 }
 
 model FieldSelect {
@@ -138,6 +144,39 @@ model FieldNumberRange {
   price         Int
   createdAt  DateTime @default(now()) @map("created_at")
   updatedAt  DateTime @updatedAt @map("updated_at")
+}
+
+model FieldCondition {
+  id            Int    @id @default(autoincrement())
+  field         Field  @relation(fields: [fieldId], references: [id], onDelete: Cascade)
+  fieldId       Int    @map("field_id") @unique
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  fieldConditionBranches FieldConditionBranch[]
+  childFields Field[] @relation("parent_field_condition")
+}
+
+model FieldConditionBranch {
+  id            Int    @id @default(autoincrement())
+  fieldCondition   FieldCondition  @relation(fields: [fieldConditionId], references: [id], onDelete: Cascade)
+  fieldConditionId Int    @map("field_condition_id")
+  label         String
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  fields FieldConditionBranchesOnFields[]
+}
+
+model FieldConditionBranchesOnFields {
+  fieldConditionBranch FieldConditionBranch @relation(fields: [fieldConditionBranchId], references: [id], onDelete: Cascade)
+  fieldConditionBranchId Int @map("field_condition_branch_id")
+  field Field @relation(fields: [fieldId], references: [id], onDelete: Cascade)
+  fieldId Int @map("field_id")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  @@id([fieldConditionBranchId, fieldId])
 }
 
 model Profile {

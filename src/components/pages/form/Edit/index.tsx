@@ -27,7 +27,8 @@ export const Edit: FC<Props> = ({ formData, profilesData }) => {
   const router = useRouter();
   const { openToast } = useToast();
   const formFormMethods = useForm<FormForm>({ defaultValues: formData, mode: 'onChange' });
-  const fields = useFieldArray({ control: formFormMethods.control, name: 'fields' });
+  const fields = useFieldArray({ control: formFormMethods.control, name: 'fields', keyName: 'hookFormArrayKey' });
+
   const watchFormId = formFormMethods.watch('id');
 
   const profileOptions = profilesData.map(
@@ -47,7 +48,6 @@ export const Edit: FC<Props> = ({ formData, profilesData }) => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          formId: formData.id,
           type,
         }),
       });
@@ -149,7 +149,7 @@ export const Edit: FC<Props> = ({ formData, profilesData }) => {
         </form>
 
         {fields.fields.map((field, index) => (
-          <Field key={field.id} type={field.type} index={index} onDelete={handleDeleteField} />
+          <Field key={field.hookFormArrayKey} field={field} index={index} onDelete={handleDeleteField} />
         ))}
 
         <div className='flex items-center gap-2'>
@@ -170,9 +170,18 @@ export const Edit: FC<Props> = ({ formData, profilesData }) => {
           >
             数値入力
           </Button>
+
+          <Button
+            theme='primary'
+            type='button'
+            svgComponent={(className) => <PlusIcon className={className} />}
+            onClick={() => handleAddField(FieldType.CONDITION)}
+          >
+            条件分岐
+          </Button>
         </div>
 
-        <p className='text-black text-normal'>{FIELD_COUNT_LIMIT}個まで追加できます。</p>
+        <p className='text-black text-normal'>条件分岐含めて{FIELD_COUNT_LIMIT}個まで追加できます。</p>
       </div>
     </FormProvider>
   );
