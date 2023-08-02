@@ -1,25 +1,77 @@
-import type { Form, Field, FieldSelect, FieldSelectOption, FieldNumber, FieldNumberRange } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 
-/**
+export const formClientSelectCondition = {
+  select: {
+    id: true,
+    profileId: true,
+    name: true,
+    description: true,
+    friendlyKey: true,
+    fields: {
+      include: {
+        fieldConditionBranches: {
+          select: {
+            fieldConditionBranchId: true,
+          },
+        },
+        fieldSelect: {
+          select: {
+            id: true,
+            fieldId: true,
+            isMulti: true,
+            fieldSelectOptions: {
+              select: {
+                id: true,
+                fieldSelectId: true,
+                label: true,
+                price: true,
+              },
+            },
+          },
+        },
+        fieldNumber: {
+          select: {
+            id: true,
+            fieldId: true,
+            fieldNumberRanges: {
+              select: {
+                id: true,
+                fieldNumberId: true,
+                gte: true,
+                lt: true,
+                price: true,
+              },
+            },
+          },
+        },
+        fieldCondition: {
+          select: {
+            id: true,
+            fieldId: true,
+            fieldConditionBranches: {
+              select: {
+                id: true,
+                fieldConditionId: true,
+                label: true,
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+};
+const formClient = Prisma.validator<Prisma.FormArgs>()(formClientSelectCondition);
+export type FormClient = Prisma.FormGetPayload<typeof formClient>;
+export type ParsedField = FormClient['fields'][number] & { fields: ParsedField[] } & {
+  fieldSelect: (NonNullable<FormClient['fields'][number]['fieldSelect']> & { deleteOptionIds?: number[] }) | null;
+  fieldNumber: (NonNullable<FormClient['fields'][number]['fieldNumber']> & { deleteOptionIds?: number[] }) | null;
+  fieldCondition: (NonNullable<FormClient['fields'][number]['fieldCondition']> & { deleteOptionIds?: number[] }) | null;
+};
+/** 最終的なフロントでのデータの持ち方 */
+export type ParsedFormClient = Omit<FormClient, 'fields'> & { fields: ParsedField[] };
+
+/*
  * フォームのhook-form向け型定義
  */
-export type FormForm = { profileId: number } & Form & {
-    fields: (Field & {
-      fieldSelect:
-        | (FieldSelect & { deleteOptionIds?: number[] } & {
-            fieldSelectOptions:
-              | FieldSelectOption[]
-              | (Omit<FieldSelectOption, 'id' | 'fieldSelectId' | 'createdAt' | 'updatedAt'> &
-                  Partial<Pick<FieldSelectOption, 'id' | 'fieldSelectId' | 'createdAt' | 'updatedAt'>>)[]; // 一部をオプショナルに変更
-          })
-        | null;
-      fieldNumber:
-        | (FieldNumber & { deleteOptionIds?: number[] } & {
-            fieldNumberRanges:
-              | FieldNumberRange[]
-              | (Omit<FieldNumberRange, 'id' | 'fieldNumberId' | 'createdAt' | 'updatedAt'> &
-                  Partial<Pick<FieldNumberRange, 'id' | 'fieldNumberId' | 'createdAt' | 'updatedAt'>>)[]; // 一部をオプショナルに変更;
-          })
-        | null;
-    })[];
-  };
+export type FormForm = ParsedFormClient;

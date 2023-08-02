@@ -1,16 +1,20 @@
 import { PlusIcon, TrashIcon } from '@heroicons/react/24/solid';
+import { FieldType } from '@prisma/client';
 import { Fragment, useMemo, type FC } from 'react';
 import { useFormContext, useFieldArray } from 'react-hook-form';
 
 import { Button } from '@/components/ui/Button';
 import { IconButton } from '@/components/ui/IconButton';
 import { Input } from '@/components/ui/Input';
+import { useToast } from '@/hooks/useToast';
 import { FIELD_NUMBER_RANGE_LIMIT } from '@/utils/validation/field';
 
+import type { putSchemaType } from '@/app/api/admin/form/[formId]/field/[fieldId]/schema';
 import type { FormForm } from '@/components/pages/form/Edit/type';
 
 type Props = {
-  index: number;
+  /** ネスト考慮 */
+  name: `fields.${number}`;
 };
 
 const getRangeLabel = (index: number, length: number) => {
@@ -25,11 +29,12 @@ const getRangeLabel = (index: number, length: number) => {
   return `(${index + 1}) 入力が(${index})以上 (${index + 1})未満の時`;
 };
 
-export const NumberField: FC<Props> = ({ index }) => {
+export const NumberField: FC<Props> = ({ name }) => {
   const { register, control, setValue, getValues } = useFormContext<FormForm>();
+  const { openToast } = useToast();
   const fieldNumberRanges = useFieldArray({
     control,
-    name: `fields.${index}.fieldNumber.fieldNumberRanges`,
+    name: `${name}.fieldNumber.fieldNumberRanges`,
     keyName: 'hookFormArrayKey',
   });
 
@@ -41,17 +46,66 @@ export const NumberField: FC<Props> = ({ index }) => {
   ) => {
     fieldNumberRanges.remove(i);
     // MEMO: 削除マーカーを付与
-    if (fieldNumberRange.id !== undefined) {
-      setValue(`fields.${index}.fieldNumber.deleteOptionIds`, [
-        ...(getValues(`fields.${index}.fieldNumber.deleteOptionIds`) || []),
+    if (fieldNumberRange.id !== 0) {
+      setValue(`${name}.fieldNumber.deleteOptionIds`, [
+        ...(getValues(`${name}.fieldNumber.deleteOptionIds`) || []),
         fieldNumberRange.id,
       ]);
     }
   };
 
+  const handleUpdate = async () => {
+    try {
+      const fieldValue = getValues(name);
+      const { name: fieldName, description, fieldNumber } = fieldValue;
+
+      // MEMO: ltはこのタイミングで動的に生成する
+      const param: putSchemaType = {
+        type: FieldType.NUMBER,
+        name: fieldName,
+        description,
+        options:
+          fieldNumber?.fieldNumberRanges.map((range, i) => ({
+            id: range.id,
+            price: range.price,
+            gte: i === 0 ? undefined : fieldNumber?.fieldNumberRanges[i - 1].lt || undefined,
+            lt:
+              i !== fieldNumber?.fieldNumberRanges.length - 1
+                ? fieldNumber?.fieldNumberRanges[i].lt || undefined
+                : undefined,
+          })) || [],
+        deleteOptionIds: fieldNumber?.deleteOptionIds || [],
+      };
+
+      const res = await fetch(`/api/admin/form/${getValues('id')}/field/${getValues(`${name}.id`)}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(param),
+      });
+
+      if (!res.ok) throw new Error('error');
+
+      // MEMO: 各オプションにidを付与し、増分判定から除外できるようにする
+      const data = await res.json();
+
+      const newFieldSelectOptionValue = fieldNumber?.fieldNumberRanges.map((range, i) => ({
+        ...range,
+        id: data.fieldNumber.fieldNumberRanges[i].id,
+      }));
+
+      setValue(`${name}.fieldNumber.fieldNumberRanges`, newFieldSelectOptionValue || []);
+
+      openToast('success', 'フィールドを更新しました');
+    } catch (err) {
+      openToast('error', 'エラーが発生しました');
+    }
+  };
+
   return (
     <>
-      <Input {...register(`fields.${index}.name`)} label='設問名' type='text' placeholder='設問名を入力' />
+      <Input {...register(`${name}.name`)} label='設問名' type='text' placeholder='設問名を入力' />
 
       {fieldNumberRanges.fields.map((fieldNumberRange, i) => (
         <Fragment key={fieldNumberRange.hookFormArrayKey}>
@@ -62,7 +116,7 @@ export const NumberField: FC<Props> = ({ index }) => {
               <div className='w-full' />
             ) : (
               <Input
-                {...register(`fields.${index}.fieldNumber.fieldNumberRanges.${i}.lt`, { valueAsNumber: true })}
+                {...register(`${name}.fieldNumber.fieldNumberRanges.${i}.lt`, { valueAsNumber: true })}
                 label='値'
                 type='number'
                 placeholder='値を入力'
@@ -71,7 +125,7 @@ export const NumberField: FC<Props> = ({ index }) => {
             )}
 
             <Input
-              {...register(`fields.${index}.fieldNumber.fieldNumberRanges.${i}.price`, { valueAsNumber: true })}
+              {...register(`${name}.fieldNumber.fieldNumberRanges.${i}.price`, { valueAsNumber: true })}
               label='金額（税抜）'
               type='number'
               placeholder='金額'
@@ -97,6 +151,8 @@ export const NumberField: FC<Props> = ({ index }) => {
         svgComponent={(className) => <PlusIcon className={className} />}
         onClick={() => {
           fieldNumberRanges.append({
+            id: 0,
+            fieldNumberId: getValues(`${name}.fieldNumber.id`),
             gte: 0,
             lt: 0,
             price: 0,
@@ -108,6 +164,10 @@ export const NumberField: FC<Props> = ({ index }) => {
       </Button>
 
       <p className='self-end text-black text-normal'>{FIELD_NUMBER_RANGE_LIMIT}個まで追加できます。</p>
+
+      <Button theme='primary' type='button' onClick={handleUpdate}>
+        更新
+      </Button>
     </>
   );
 };

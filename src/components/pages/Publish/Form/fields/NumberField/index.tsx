@@ -1,18 +1,19 @@
-import { memo, useEffect } from 'react';
+import { memo, useEffect, useMemo } from 'react';
 import { useFormContext } from 'react-hook-form';
 
+import { getRecursiveError } from '@/components/pages/Publish/utils/hookForm';
 import { Input } from '@/components/ui/Input';
 
 import type { postSchemaType } from '@/app/api/p/result/schema';
 import type { FC } from 'react';
 
 type Props = {
-  index: number;
   id: number;
   label: string;
+  name: `fields.${number}`;
 };
 
-const _NumberField: FC<Props> = ({ index, id, label }) => {
+const _NumberField: FC<Props> = ({ id, label, name }) => {
   const {
     register,
     setValue,
@@ -20,16 +21,18 @@ const _NumberField: FC<Props> = ({ index, id, label }) => {
   } = useFormContext<postSchemaType>();
 
   useEffect(() => {
-    setValue(`fields.${index}.id`, id);
-  }, [index, id, setValue]);
+    setValue(`${name}.id`, id);
+  }, [name, id, setValue]);
+
+  const error = useMemo(() => getRecursiveError(name, errors), [name, errors]);
 
   return (
     <Input
-      {...register(`fields.${index}.value`, { valueAsNumber: true })}
+      {...register(`${name}.value`, { valueAsNumber: true })}
       label={label}
       type='number'
       placeholder='数値を入力'
-      error={errors.fields !== undefined ? errors.fields[index]?.value?.message : ''}
+      error={error !== undefined ? error.value?.message : ''}
     />
   );
 };

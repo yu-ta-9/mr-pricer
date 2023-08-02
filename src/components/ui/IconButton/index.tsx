@@ -1,6 +1,6 @@
 import type { FC, ReactNode } from 'react';
 
-type ButtonTheme = 'primary' | 'secondary' | 'danger';
+type ButtonTheme = 'primary' | 'secondary' | 'black' | 'danger';
 
 type Props = {
   theme: ButtonTheme;
@@ -16,6 +16,8 @@ const themeClasses = (theme: ButtonTheme) => {
       return 'fill-primary hover:opacity-50';
     case 'secondary':
       return 'fill-secondary hover:opacity-50';
+    case 'black':
+      return 'fill-black hover:opacity-50';
     case 'danger':
       return 'fill-danger hover:opacity-50';
   }
@@ -27,6 +29,8 @@ const themeClassesBgFill = (theme: ButtonTheme) => {
       return 'bg-primary';
     case 'secondary':
       return 'bg-secondary';
+    case 'black':
+      return 'bg-black';
     case 'danger':
       return 'bg-danger';
   }

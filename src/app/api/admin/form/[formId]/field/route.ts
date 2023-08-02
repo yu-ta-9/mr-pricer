@@ -1,4 +1,3 @@
-import { FieldType } from '@prisma/client';
 import { getServerSession } from 'next-auth';
 
 import { postSchema } from '@/app/api/admin/form/[formId]/field/schema';
@@ -6,6 +5,8 @@ import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { authForm } from '@/utils/auth/resources/form';
 import { FIELD_COUNT_LIMIT } from '@/utils/validation/field';
+
+import type { FieldType } from '@prisma/client';
 
 /**
  * フィールド作成
@@ -34,12 +35,20 @@ export async function POST(req: Request, { params }: { params: { formId: string 
     );
   }
 
-  const { type } = parsed.data;
+  const { type, parentConditionId } = parsed.data;
 
   try {
     const count = await prisma.field.count({ where: { formId: Number(params.formId) } });
     if (count >= FIELD_COUNT_LIMIT) {
-      throw new Error('項目の作成上限に達しました。');
+      return new Response(
+        JSON.stringify({
+          message: 'Bad Request',
+          issues: '項目の作成上限に達しました。',
+        }),
+        {
+          status: 400,
+        },
+      );
     }
 
     const field = await prisma.field.create({
@@ -48,43 +57,15 @@ export async function POST(req: Request, { params }: { params: { formId: string 
         name: '設問名',
         description: '',
         type: type,
-        ...(type === FieldType.SELECT
+        ...(parentConditionId !== undefined
           ? {
-              fieldSelect: {
-                create: {
-                  fieldSelectOptions: {
-                    create: [
-                      {
-                        label: '項目1',
-                        price: 0,
-                      },
-                    ],
-                  },
-                },
-              },
+              parentFieldConditionId: parentConditionId,
             }
-          : {
-              fieldNumber: {
-                create: {
-                  fieldNumberRanges: {
-                    create: [
-                      {
-                        gte: undefined,
-                        lt: 1,
-                        price: 0,
-                      },
-                      {
-                        gte: 1,
-                        lt: undefined,
-                        price: 1,
-                      },
-                    ],
-                  },
-                },
-              },
-            }),
+          : undefined),
+        ...getFieldDetailParams(type),
       },
       include: {
+        fieldConditionBranches: true,
         fieldSelect: {
           include: {
             fieldSelectOptions: true,
@@ -95,10 +76,15 @@ export async function POST(req: Request, { params }: { params: { formId: string 
             fieldNumberRanges: true,
           },
         },
+        fieldCondition: {
+          include: {
+            fieldConditionBranches: true,
+          },
+        },
       },
     });
 
-    return new Response(JSON.stringify(field), {
+    return new Response(JSON.stringify(Object.assign(field, { fields: [] })), {
       status: 200,
     });
   } catch (e) {
@@ -107,3 +93,58 @@ export async function POST(req: Request, { params }: { params: { formId: string 
     });
   }
 }
+
+const getFieldDetailParams = (type: FieldType): any => {
+  switch (type) {
+    case 'SELECT':
+      return {
+        fieldSelect: {
+          create: {
+            fieldSelectOptions: {
+              create: [
+                {
+                  label: '項目1',
+                  price: 0,
+                },
+              ],
+            },
+          },
+        },
+      };
+    case 'NUMBER':
+      return {
+        fieldNumber: {
+          create: {
+            fieldNumberRanges: {
+              create: [
+                {
+                  gte: undefined,
+                  lt: 1,
+                  price: 0,
+                },
+                {
+                  gte: 1,
+                  lt: undefined,
+                  price: 1,
+                },
+              ],
+            },
+          },
+        },
+      };
+    case 'CONDITION':
+      return {
+        fieldCondition: {
+          create: {
+            fieldConditionBranches: {
+              create: [
+                {
+                  label: '選択肢1',
+                },
+              ],
+            },
+          },
+        },
+      };
+  }
+};
