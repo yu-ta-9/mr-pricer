@@ -29,8 +29,6 @@ export const usePublishPageContext = () => {
 const calculate = (value: postSchemaType, formData?: FormData): number => {
   if (formData === undefined) return 0;
 
-  console.log({ value, formData });
-
   const sum = value.fields.reduce((sum, field) => {
     // MEMO: DBからの情報をマッピング
     const formFieldData = formData.fields.find((f) => f.id === field.id);

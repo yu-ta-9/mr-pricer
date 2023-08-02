@@ -114,7 +114,6 @@ export const ConditionField: FC<Props> = ({ index, name, field, conditionFieldIn
   const handleAddField = async (type: FieldType) => {
     try {
       const parentConditionId = getValues(`${name}.fieldCondition.id`);
-      console.log({ parentConditionId });
       const res = await fetch(`/api/admin/form/${formId}/field`, {
         method: 'POST',
         headers: {
@@ -129,7 +128,6 @@ export const ConditionField: FC<Props> = ({ index, name, field, conditionFieldIn
       if (!res.ok) throw new Error('error');
 
       const data = await res.json();
-      console.log({ data, conditionFieldChildFields });
       append(data);
 
       openToast('success', 'フィールドを作成しました');
