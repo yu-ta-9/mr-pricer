@@ -7,7 +7,6 @@ import type { CustomColor } from '@/components/ui/type';
 
 export const customStyle = (customColor: CustomColor['customColor']) => css`
   background-color: ${customColor?.primaryColor} !important;
-  color: ${customColor?.textColor} !important;
 
   &:hover {
     // TODO: tailwindの指定に沿うようすれば不要になるのでhex → rgbに変換するライブラリを導入してそうしたい

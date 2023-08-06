@@ -11,6 +11,7 @@ export const customStyle = (customColor: CustomColor['customColor']) => css`
 
   &::placeholder {
     color: ${customColor?.textColor} !important;
+    opacity: 0.5;
   }
 
   &:focus {
