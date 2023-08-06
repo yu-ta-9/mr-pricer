@@ -120,7 +120,7 @@ export const SelectField: FC<Props> = ({ name }) => {
           />
           <Input
             {...register(`${name}.fieldSelect.fieldSelectOptions.${i}.price`, { valueAsNumber: true })}
-            label='金額（税抜）'
+            label='金額'
             type='number'
             placeholder='金額'
           />

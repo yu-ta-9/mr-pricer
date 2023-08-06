@@ -29,7 +29,10 @@ export const Result: FC<Props> = ({ result, isCalculating, onCalculate }) => {
       }}
     >
       <p className='font-bold text-normal'>お見積り</p>
-      <h2 className='text-2xl font-bold'>{formatToThousandsSeparator(result)}円（税抜）</h2>
+
+      <h2 className='text-2xl font-bold'>{formatToThousandsSeparator(result)}円〜</h2>
+
+      <p>※目安となる料金です。ご連絡いただき次第、詳しい内容をお伺いし改めてお見積りいたします。</p>
 
       <div className='flex items-center gap-2'>
         ご依頼内容を変更して再計算が可能です。
