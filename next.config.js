@@ -5,6 +5,10 @@ module.exports = {
   sassOptions: {
     includePaths: [path.join(__dirname, 'styles')],
   },
+  /**
+   * バンドルの節約
+   * ref: https://github.com/orgs/vercel/discussions/103#discussioncomment-6356642
+   */
   experimental: {
     outputFileTracingExcludes: {
       '*': [
