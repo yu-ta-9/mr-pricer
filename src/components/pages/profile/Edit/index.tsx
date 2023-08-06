@@ -102,6 +102,19 @@ export const Edit: FC<Props> = ({ profileData, profileIconUrl }) => {
     }
   };
 
+  /**
+   * デフォルトの色設定に変更する
+   */
+  const handleChangeToDefaultColor = () => {
+    if (confirm('デフォルトのテーマに変更します。よろしいですか？')) {
+      profileFormMethods.setValue('profileTheme.primaryColor', COLOR_PALETTE.primary);
+      profileFormMethods.setValue('profileTheme.formBackgroundColor', COLOR_PALETTE.white);
+      profileFormMethods.setValue('profileTheme.contentBackgroundColor', COLOR_PALETTE.white);
+      profileFormMethods.setValue('profileTheme.textColor', COLOR_PALETTE.black);
+      profileFormMethods.setValue('profileTheme.borderColor', COLOR_PALETTE.basePrimary);
+    }
+  };
+
   const onSubmit: SubmitHandler<ProfileForm> = async (data) => {
     try {
       const { name, content, profileLinks, deleteProfileLinksIds, profileTheme } = data;
@@ -304,6 +317,10 @@ export const Edit: FC<Props> = ({ profileData, profileIconUrl }) => {
                 />
               )}
             />
+
+            <Button className='self-end' theme='primary' type='button' onClick={handleChangeToDefaultColor}>
+              デフォルトに戻す
+            </Button>
           </section>
 
           <Button className='self-end' theme='primary' type='submit'>
