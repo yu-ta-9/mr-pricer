@@ -1,7 +1,7 @@
 import { forwardRef, useState } from 'react';
 import CreatableSelect from 'react-select/creatable';
 
-import { customStyles } from '@/components/ui/SelectMulti/customStyles';
+import { customStyles } from '@/components/ui/SelectMultiCreatable/customStyles';
 
 import type { ReactSelectOption } from '../../../../types/react-select';
 import type { ComponentProps } from 'react';
