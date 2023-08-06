@@ -17,8 +17,20 @@ const EditPage = async ({ params }: { params: { profileId: string } }) => {
     const user = await prisma.user.findUniqueOrThrow({ where: { id: session.user!.id } });
     const profile = await prisma.profile.findFirstOrThrow({
       where: { id: Number(params.profileId), userId: user.id },
-      include: {
-        profileLinks: true,
+      select: {
+        id: true,
+        name: true,
+        content: true,
+        iconKey: true,
+        profileLinks: {
+          select: {
+            id: true,
+            profileId: true,
+            label: true,
+            url: true,
+          },
+        },
+        profileTheme: true,
       },
     });
 

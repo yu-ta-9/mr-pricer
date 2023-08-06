@@ -3,15 +3,17 @@
 import { ArrowLeftIcon, TrashIcon } from '@heroicons/react/24/solid';
 import { useRouter } from 'next/navigation';
 import { useState, type FC } from 'react';
-import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
+import { Controller, FormProvider, useFieldArray, useForm } from 'react-hook-form';
 
 import { Button } from '@/components/ui/Button';
 import { FileUpload } from '@/components/ui/FileUpload';
 import { Heading } from '@/components/ui/Heading';
 import { IconButton } from '@/components/ui/IconButton';
 import { Input } from '@/components/ui/Input';
+import { SelectColor } from '@/components/ui/SelectColor';
 import { Textarea } from '@/components/ui/Textarea';
 import { useToast } from '@/hooks/useToast';
+import { COLOR_PALETTE } from '@/utils/styles/palette';
 import { PROFILE_LINK_COUNT_LIMIT } from '@/utils/validation/profile';
 
 import type { ProfileForm } from '@/components/pages/profile/Edit/type';
@@ -25,7 +27,19 @@ type Props = {
 export const Edit: FC<Props> = ({ profileData, profileIconUrl }) => {
   const router = useRouter();
   const { openToast } = useToast();
-  const profileFormMethods = useForm<ProfileForm>({ defaultValues: profileData, mode: 'onChange' });
+  const profileFormMethods = useForm<ProfileForm>({
+    defaultValues: {
+      ...profileData,
+      profileTheme: {
+        primaryColor: profileData.profileTheme?.primaryColor || COLOR_PALETTE.primary,
+        formBackgroundColor: profileData.profileTheme?.formBackgroundColor || COLOR_PALETTE.white,
+        contentBackgroundColor: profileData.profileTheme?.contentBackgroundColor || COLOR_PALETTE.white,
+        textColor: profileData.profileTheme?.textColor || COLOR_PALETTE.black,
+        borderColor: profileData.profileTheme?.borderColor || COLOR_PALETTE.basePrimary,
+      },
+    },
+    mode: 'onChange',
+  });
   const profileLinkFields = useFieldArray({
     control: profileFormMethods.control,
     name: 'profileLinks',
@@ -90,17 +104,19 @@ export const Edit: FC<Props> = ({ profileData, profileIconUrl }) => {
 
   const onSubmit: SubmitHandler<ProfileForm> = async (data) => {
     try {
+      const { name, content, profileLinks, deleteProfileLinksIds, profileTheme } = data;
       const res = await fetch(`/api/admin/profile/${data.id}`, {
         method: 'PUT',
         body: JSON.stringify({
-          name: data.name,
-          content: data.content,
-          profileLinks: data.profileLinks.map((profileLink) => ({
+          name,
+          content,
+          profileLinks: profileLinks.map((profileLink) => ({
             id: profileLink.id,
             label: profileLink.label,
             url: profileLink.url,
           })),
-          deleteProfileLinksIds: data.deleteProfileLinksIds,
+          deleteProfileLinksIds,
+          profileTheme,
         }),
       });
 
@@ -108,11 +124,11 @@ export const Edit: FC<Props> = ({ profileData, profileIconUrl }) => {
 
       const resJson = await res.json();
       // upsert用にリンクにIDを添える
-      const profileLinks = resJson.profileLinks.map((profileLink: ProfileForm['profileLinks'][number]) => ({
+      const newProfileLinks = resJson.profileLinks.map((profileLink: ProfileForm['profileLinks'][number]) => ({
         ...profileLink,
         id: profileLink.id || undefined,
       }));
-      profileFormMethods.setValue('profileLinks', profileLinks);
+      profileFormMethods.setValue('profileLinks', newProfileLinks);
 
       openToast('success', 'プロフィールを更新しました');
     } catch (err) {
@@ -203,13 +219,92 @@ export const Edit: FC<Props> = ({ profileData, profileIconUrl }) => {
           <Button
             type='button'
             theme='primary'
-            onClick={() => profileLinkFields.append({ label: '', url: '' })}
+            onClick={() => profileLinkFields.append({ id: 0, profileId: profileData.id, label: '', url: '' })}
             disabled={profileLinkFields.fields.length >= PROFILE_LINK_COUNT_LIMIT}
           >
             追加
           </Button>
 
           <p className='text-black text-normal'>{PROFILE_LINK_COUNT_LIMIT}個まで追加できます。</p>
+
+          <p className='text-black text-normal'>テーマ設定</p>
+
+          <section className='flex flex-col w-full gap-4 p-4 border-2 rounded border-primary'>
+            <p className='text-black text-normal'>メイン色</p>
+
+            <Controller
+              control={profileFormMethods.control}
+              name='profileTheme.primaryColor'
+              render={({ field: { value, onChange } }) => (
+                <SelectColor
+                  value={value}
+                  onChange={(value) => {
+                    onChange(value);
+                  }}
+                />
+              )}
+            />
+
+            <p className='text-black text-normal'>フォーム背景色</p>
+
+            <Controller
+              control={profileFormMethods.control}
+              name='profileTheme.formBackgroundColor'
+              render={({ field: { value, onChange } }) => (
+                <SelectColor
+                  value={value}
+                  onChange={(value) => {
+                    onChange(value);
+                  }}
+                />
+              )}
+            />
+
+            <p className='text-black text-normal'>コンテンツ背景色</p>
+
+            <Controller
+              control={profileFormMethods.control}
+              name='profileTheme.contentBackgroundColor'
+              render={({ field: { value, onChange } }) => (
+                <SelectColor
+                  value={value}
+                  onChange={(value) => {
+                    onChange(value);
+                  }}
+                />
+              )}
+            />
+
+            <p className='text-black text-normal'>文字色</p>
+
+            <Controller
+              control={profileFormMethods.control}
+              name='profileTheme.textColor'
+              render={({ field: { value, onChange } }) => (
+                <SelectColor
+                  value={value}
+                  onChange={(value) => {
+                    onChange(value);
+                  }}
+                />
+              )}
+            />
+
+            <p className='text-black text-normal'>枠線色</p>
+
+            <Controller
+              control={profileFormMethods.control}
+              name='profileTheme.borderColor'
+              render={({ field: { value, onChange } }) => (
+                <SelectColor
+                  value={value}
+                  onChange={(value) => {
+                    onChange(value);
+                  }}
+                />
+              )}
+            />
+          </section>
 
           <Button className='self-end' theme='primary' type='submit'>
             更新

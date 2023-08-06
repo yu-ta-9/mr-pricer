@@ -4,6 +4,7 @@ import ReactSelect from 'react-select';
 import { customStyles } from '@/components/ui/SelectMulti/customStyles';
 
 import type { ReactSelectOption } from '../../../../types/react-select';
+import type { CustomColor } from '@/components/ui/type';
 import type { ComponentProps } from 'react';
 
 type Props = {
@@ -13,10 +14,11 @@ type Props = {
   fullWidth?: boolean;
   error?: string;
   onOptionChange: (newValue: ReactSelectOption[]) => void;
-} & ComponentProps<typeof ReactSelect>;
+} & CustomColor &
+  ComponentProps<typeof ReactSelect>;
 
 export const SelectMulti = forwardRef<HTMLDivElement, Props>(
-  ({ id, label, placeholder, options, fullWidth, error, onOptionChange, ...selectProps }, ref) => {
+  ({ id, label, placeholder, options, fullWidth, error, onOptionChange, customColor, ...selectProps }, ref) => {
     const isError = error !== undefined && error !== '';
 
     return (
@@ -29,7 +31,7 @@ export const SelectMulti = forwardRef<HTMLDivElement, Props>(
 
         <ReactSelect
           {...selectProps}
-          styles={customStyles(isError)}
+          styles={customStyles(isError, customColor)}
           isMulti
           options={options}
           placeholder={placeholder}

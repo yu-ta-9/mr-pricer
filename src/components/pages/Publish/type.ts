@@ -10,6 +10,7 @@ export const formClientSelectCondition = {
     profile: {
       include: {
         profileLinks: true,
+        profileTheme: true,
       },
     },
     fields: {

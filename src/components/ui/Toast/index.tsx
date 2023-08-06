@@ -1,9 +1,12 @@
 import { CheckIcon, InformationCircleIcon, XMarkIcon } from '@heroicons/react/24/solid';
 
+import { customStyle } from '@/components/ui/Toast/customStyle';
+
+import type { CustomColor } from '@/components/ui/type';
 import type { ToastType } from '@/contexts/ToastContext';
 import type { FC } from 'react';
 
-type Props = { isShow: boolean; type: ToastType; message: string };
+type Props = { isShow: boolean; type: ToastType; message: string } & CustomColor;
 
 const getIcon = (type: Props['type']) => {
   switch (type) {
@@ -16,12 +19,16 @@ const getIcon = (type: Props['type']) => {
   }
 };
 
-export const Toast: FC<Props> = ({ isShow, type, message }) => {
+export const Toast: FC<Props> = ({ isShow, type, message, customColor }) => {
   return (
-    <div className={`toast ${isShow ? 'toast-show' : 'toast-hide'}`}>
+    <div
+      css={customStyle(customColor)}
+      className={`text-white toast ${isShow ? 'toast-show' : 'toast-hide'}`}
+      style={{ backgroundColor: customColor?.primaryColor, color: customColor?.textColor }}
+    >
       {getIcon(type)}
 
-      <span className='text-sm text-white'>{message}</span>
+      <span className='text-sm'>{message}</span>
     </div>
   );
 };

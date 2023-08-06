@@ -36,7 +36,13 @@ export async function PUT(req: Request, { params }: { params: { profileId: strin
 
   try {
     const profile = await prisma.$transaction(async (tx) => {
-      const { name, content, profileLinks, deleteProfileLinksIds } = parsed.data;
+      const {
+        name,
+        content,
+        profileLinks,
+        deleteProfileLinksIds,
+        profileTheme: { primaryColor, formBackgroundColor, contentBackgroundColor, textColor, borderColor },
+      } = parsed.data;
 
       const profile = await tx.profile.update({
         where: { id: Number(params.profileId) },
@@ -59,6 +65,24 @@ export async function PUT(req: Request, { params }: { params: { profileId: strin
                 },
               })) || [],
             deleteMany: deleteProfileLinksIds?.map((id) => ({ id })) || [],
+          },
+          profileTheme: {
+            upsert: {
+              create: {
+                primaryColor,
+                formBackgroundColor,
+                contentBackgroundColor,
+                textColor,
+                borderColor,
+              },
+              update: {
+                primaryColor,
+                formBackgroundColor,
+                contentBackgroundColor,
+                textColor,
+                borderColor,
+              },
+            },
           },
         },
 

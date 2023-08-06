@@ -190,6 +190,7 @@ model Profile {
   updatedAt  DateTime @updatedAt @map("updated_at")
 
   profileLinks  ProfileLink[]
+  profileTheme ProfileTheme?
   forms         Form[]
 }
 
@@ -199,6 +200,19 @@ model ProfileLink {
   profileId     Int    @map("profile_id")
   label         String
   url           String
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+}
+
+model ProfileTheme {
+  id Int @id @default(autoincrement())
+  profile       Profile   @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  profileId     Int    @map("profile_id") @unique
+  primaryColor  String @map("primary_color")
+  formBackgroundColor String @map("form_background_color")
+  contentBackgroundColor String @map("content_background_color")
+  textColor String @map("text_color")
+  borderColor String @map("border_color")
   createdAt  DateTime @default(now()) @map("created_at")
   updatedAt  DateTime @updatedAt @map("updated_at")
 }

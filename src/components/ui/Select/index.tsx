@@ -1,4 +1,11 @@
+'use client';
+/** @jsxImportSource @emotion/react */
+
 import { forwardRef } from 'react';
+
+import { customStyle } from '@/components/ui/Select/customStyle';
+
+import type { CustomColor } from '@/components/ui/type';
 
 type Props = {
   label?: string;
@@ -6,10 +13,11 @@ type Props = {
   options: { value: string | number; label: string }[];
   fullWidth?: boolean;
   error?: string;
-} & React.SelectHTMLAttributes<HTMLSelectElement>;
+} & CustomColor &
+  React.SelectHTMLAttributes<HTMLSelectElement>;
 
 export const Select = forwardRef<HTMLSelectElement, Props>(
-  ({ label, placeholder, options, fullWidth, error, ...selectProps }, ref) => {
+  ({ label, placeholder, options, fullWidth, error, customColor, ...selectProps }, ref) => {
     const isError = error !== undefined && error !== '';
 
     return (
@@ -18,10 +26,11 @@ export const Select = forwardRef<HTMLSelectElement, Props>(
 
         <select
           {...selectProps}
+          css={customColor !== undefined ? customStyle(customColor) : undefined}
           ref={ref}
           className={
             'block w-full mt-1 text-sm bg-white rounded-md shadow-sm color-base-primary border-base-primary focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50' +
-            (isError && ' border-danger')
+            (isError ? ' border-danger' : '')
           }
           placeholder={placeholder}
         >
