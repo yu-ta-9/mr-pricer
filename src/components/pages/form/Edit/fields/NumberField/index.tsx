@@ -57,13 +57,16 @@ export const NumberField: FC<Props> = ({ name }) => {
   const handleUpdate = async () => {
     try {
       const fieldValue = getValues(name);
-      const { name: fieldName, description, fieldNumber } = fieldValue;
+      const { name: fieldName, description, fieldNumber, fieldConditionBranches } = fieldValue;
 
       // MEMO: ltはこのタイミングで動的に生成する
       const param: putSchemaType = {
         type: FieldType.NUMBER,
         name: fieldName,
         description,
+        fieldConditionBranchIds: fieldConditionBranches.map(
+          (fieldConditionBranch) => fieldConditionBranch.fieldConditionBranchId,
+        ),
         options:
           fieldNumber?.fieldNumberRanges.map((range, i) => ({
             id: range.id,

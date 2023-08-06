@@ -70,12 +70,15 @@ export const ConditionField: FC<Props> = ({ index, name, field, conditionFieldIn
   const handleUpdate = async () => {
     try {
       const fieldValue = getValues(name);
-      const { name: fieldName, description, fieldCondition } = fieldValue;
+      const { name: fieldName, description, fieldCondition, fieldConditionBranches } = fieldValue;
 
       const param: putSchemaType = {
         type: FieldType.CONDITION,
         name: fieldName,
         description,
+        fieldConditionBranchIds: fieldConditionBranches.map(
+          (fieldConditionBranch) => fieldConditionBranch.fieldConditionBranchId,
+        ),
         options:
           fieldCondition?.fieldConditionBranches.map((option) => ({
             id: option.id,
