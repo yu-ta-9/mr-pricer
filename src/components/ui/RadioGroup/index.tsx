@@ -1,3 +1,9 @@
+'use client';
+/** @jsxImportSource @emotion/react */
+
+import { customStyle } from '@/components/ui/RadioGroup/customStyle';
+
+import type { CustomColor } from '@/components/ui/type';
 import type { FC } from 'react';
 
 type Props = {
@@ -8,9 +14,9 @@ type Props = {
   onChange: (value: string) => void;
   fullWidth?: boolean;
   error?: string;
-};
+} & CustomColor;
 
-export const RadioGroup: FC<Props> = ({ label, options, name, value, onChange, fullWidth, error }) => {
+export const RadioGroup: FC<Props> = ({ label, options, name, value, onChange, fullWidth, error, customColor }) => {
   const isError = error !== undefined && error !== '';
 
   return (
@@ -21,6 +27,7 @@ export const RadioGroup: FC<Props> = ({ label, options, name, value, onChange, f
         {options.map((option, i) => (
           <div key={option.value} className='flex items-center mr-4'>
             <input
+              css={customColor !== undefined ? customStyle(customColor) : undefined}
               id={`${name}-${i}`}
               type='radio'
               value={option.value}
@@ -29,7 +36,7 @@ export const RadioGroup: FC<Props> = ({ label, options, name, value, onChange, f
               checked={option.value === value}
               className='w-4 h-4 cursor-pointer text-primary bg-base-secondary border-base-secondary focus:ring-primary'
             />
-            <label htmlFor={`${name}-${i}`} className='ml-2 text-sm text-black cursor-pointer'>
+            <label htmlFor={`${name}-${i}`} className='ml-2 text-sm cursor-pointer'>
               {option.label}
             </label>
           </div>

@@ -6,9 +6,14 @@ import { Toast } from '@/components/ui/Toast';
 import { ToastContext } from '@/contexts/ToastContext';
 import { useFade } from '@/hooks/useFade';
 
+import type { CustomColor } from '@/components/ui/type';
 import type { ToastType } from '@/contexts/ToastContext';
 
-export const ToastProvider = ({ children }: { children: React.ReactNode }) => {
+type Props = {
+  children: React.ReactNode;
+} & CustomColor;
+
+export const ToastProvider = ({ children, customColor }: Props) => {
   const [isShow, setIsShow] = useState(false);
   const [type, setType] = useState<ToastType>('success');
   const [message, setMessage] = useState<string>('');
@@ -33,7 +38,7 @@ export const ToastProvider = ({ children }: { children: React.ReactNode }) => {
     <ToastContext.Provider value={{ openToast }}>
       {children}
 
-      {display && <Toast isShow={isShow} type={type} message={message} />}
+      {display && <Toast isShow={isShow} type={type} message={message} customColor={customColor} />}
     </ToastContext.Provider>
   );
 };

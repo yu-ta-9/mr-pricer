@@ -27,6 +27,7 @@ const getForm = cache(async (friendlyKey: string) => {
       profile: {
         include: {
           profileLinks: true,
+          profileTheme: true,
         },
       },
       fields: {
@@ -118,7 +119,7 @@ const FriendlyKey = async ({ params }: Props) => {
   }
 
   return (
-    <ToastProvider>
+    <ToastProvider customColor={form.profile?.profileTheme || undefined}>
       <Publish formData={formData} profileIconUrl={profileIconUrl} />
     </ToastProvider>
   );

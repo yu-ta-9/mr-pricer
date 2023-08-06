@@ -61,7 +61,7 @@ export const Form: FC = () => {
   return (
     <FormProvider {...methods}>
       <div className='flex flex-col w-full gap-4'>
-        <Heading label='依頼したい内容を入力してください' />
+        <Heading label='依頼したい内容を入力してください' customColor={formData?.profile?.profileTheme || undefined} />
 
         {formData?.fields.map((field, i) => (
           <Field key={field.id} index={i} field={field} conditionFieldIndexes={[]} />
@@ -71,7 +71,12 @@ export const Form: FC = () => {
           isCalculating ? (
             <LoadingIcon />
           ) : (
-            <Button theme='primary' type='button' onClick={handleSubmit}>
+            <Button
+              theme='primary'
+              type='button'
+              onClick={handleSubmit}
+              customColor={formData?.profile?.profileTheme || undefined}
+            >
               お見積額計算
             </Button>
           )

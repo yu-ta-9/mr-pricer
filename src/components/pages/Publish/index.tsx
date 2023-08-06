@@ -18,7 +18,13 @@ export const Publish: FC<Props> = ({ formData, profileIconUrl }) => {
     <PublishPageContext.Provider value={{ formData, profileIconUrl }}>
       <Header heading={formData.name} />
 
-      <main className='min-h-screen p-12 min-w-min'>
+      <main
+        className='min-h-screen p-12 min-w-min'
+        style={{
+          backgroundColor: formData.profile?.profileTheme?.formBackgroundColor,
+          color: formData.profile?.profileTheme?.textColor,
+        }}
+      >
         <div className='flex flex-col items-center w-full max-w-5xl gap-4 mx-auto font-mono text-sm sm:w-3/5'>
           {formData.profile !== undefined && <Profile />}
 

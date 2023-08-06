@@ -14,17 +14,21 @@ export const Profile: FC = () => {
   }
 
   return (
-    <div className='flex flex-col items-center w-full gap-4 p-4 bg-white border-2 rounded-lg border-primary'>
+    <div
+      className='flex flex-col items-center w-full gap-4 p-4 bg-white border-2 rounded-lg border-primary'
+      style={{
+        backgroundColor: formData.profile.profileTheme?.contentBackgroundColor,
+        borderColor: formData.profile.profileTheme?.borderColor,
+      }}
+    >
       {profileIconUrl !== undefined && (
         <div className='flex items-center justify-center w-24 h-24'>
-          <img src={profileIconUrl} alt='user' className='w-full h-2full' />
+          <img src={profileIconUrl} alt='user' className='h-full max-w-full' />
         </div>
       )}
 
       <h1 className='text-2xl font-bold'>{formData.profile.name}</h1>
-      <div className='flex items-center font-normal text-black break-words whitespace-pre'>
-        {formData.profile.content}
-      </div>
+      <div className='flex items-center font-normal break-words whitespace-pre-wrap'>{formData.profile.content}</div>
     </div>
   );
 };

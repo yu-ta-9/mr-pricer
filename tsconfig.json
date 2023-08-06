@@ -13,6 +13,7 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
+    //"jsxImportSource": "@emotion/react", // emotion,TODO: 不要そうなら消す
     "incremental": true,
     "plugins": [
       {
@@ -21,7 +22,8 @@
     ],
     "paths": {
       "@/*": ["./src/*"]
-    }
+    },
+    "types": ["@emotion/react/types/css-prop"] // emotion
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
   "exclude": ["node_modules"]

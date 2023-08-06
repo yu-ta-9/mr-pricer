@@ -1,6 +1,7 @@
 import { memo, useEffect, useMemo } from 'react';
 import { useFormContext } from 'react-hook-form';
 
+import { usePublishPageContext } from '@/components/pages/Publish/usePublishPageContext';
 import { getRecursiveError } from '@/components/pages/Publish/utils/hookForm';
 import { Input } from '@/components/ui/Input';
 
@@ -14,6 +15,7 @@ type Props = {
 };
 
 const _NumberField: FC<Props> = ({ id, label, name }) => {
+  const { formData } = usePublishPageContext();
   const {
     register,
     setValue,
@@ -33,6 +35,7 @@ const _NumberField: FC<Props> = ({ id, label, name }) => {
       type='number'
       placeholder='数値を入力'
       error={error !== undefined ? error.value?.message : ''}
+      customColor={formData?.profile?.profileTheme || undefined}
     />
   );
 };

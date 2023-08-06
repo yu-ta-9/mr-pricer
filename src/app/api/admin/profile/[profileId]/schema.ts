@@ -2,6 +2,11 @@ import { z } from 'zod';
 
 import { PROFILE_LINK_COUNT_LIMIT } from '@/utils/validation/profile';
 
+/**
+ * ref: https://github.com/colinhacks/zod/issues/604#issuecomment-1108756297
+ */
+const colorValidator = z.string().min(4).max(9).regex(/^#/);
+
 export const putSchema = z.object({
   name: z.string(),
   content: z.string(),
@@ -17,4 +22,11 @@ export const putSchema = z.object({
     .optional(),
   // TODO: numberで良いのでは？
   deleteProfileLinksIds: z.array(z.string().transform((v) => Number(v))).optional(),
+  profileTheme: z.object({
+    primaryColor: colorValidator,
+    formBackgroundColor: colorValidator,
+    contentBackgroundColor: colorValidator,
+    textColor: colorValidator,
+    borderColor: colorValidator,
+  }),
 });

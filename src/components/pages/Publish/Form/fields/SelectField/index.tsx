@@ -1,6 +1,7 @@
 import { memo, type FC, useEffect, useMemo } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 
+import { usePublishPageContext } from '@/components/pages/Publish/usePublishPageContext';
 import { getRecursiveError } from '@/components/pages/Publish/utils/hookForm';
 import { Select } from '@/components/ui/Select';
 import { SelectMulti } from '@/components/ui/SelectMulti';
@@ -16,6 +17,7 @@ type Props = {
 };
 
 const _SelectField: FC<Props> = ({ id, name, label, options, isMulti }) => {
+  const { formData } = usePublishPageContext();
   const {
     register,
     control,
@@ -48,6 +50,7 @@ const _SelectField: FC<Props> = ({ id, name, label, options, isMulti }) => {
             options={options}
             placeholder='選択'
             error={fieldState.error?.message ? fieldState.error.message : undefined}
+            customColor={formData?.profile?.profileTheme || undefined}
           />
         )}
       />
@@ -61,6 +64,7 @@ const _SelectField: FC<Props> = ({ id, name, label, options, isMulti }) => {
       options={options}
       placeholder='選択'
       error={error !== undefined ? error.value?.message : ''}
+      customColor={formData?.profile?.profileTheme || undefined}
     />
   );
 };

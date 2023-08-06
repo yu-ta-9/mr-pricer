@@ -1,14 +1,22 @@
-import type { FC, ReactNode } from 'react';
+/** @jsxImportSource @emotion/react */
+
+import { type FC, type ReactNode } from 'react';
+
+import { customStyle } from '@/components/ui/IconButton/customStyle';
+
+import type { CustomColor } from '@/components/ui/type';
+import type { CSSProperties } from 'react';
 
 type ButtonTheme = 'primary' | 'secondary' | 'black' | 'danger';
 
 type Props = {
   theme: ButtonTheme;
   className?: string;
-  svgComponent: (className: string) => ReactNode;
+  svgComponent: (className: string, style?: CSSProperties) => ReactNode;
   onClick: () => void;
   bgFill?: boolean;
-} & React.ButtonHTMLAttributes<HTMLButtonElement>;
+} & CustomColor &
+  React.ButtonHTMLAttributes<HTMLButtonElement>;
 
 const themeClasses = (theme: ButtonTheme) => {
   switch (theme) {
@@ -36,11 +44,20 @@ const themeClassesBgFill = (theme: ButtonTheme) => {
   }
 };
 
-export const IconButton: FC<Props> = ({ theme, className, svgComponent, onClick, bgFill, ...buttonProps }) => {
+export const IconButton: FC<Props> = ({
+  theme,
+  className,
+  svgComponent,
+  onClick,
+  bgFill,
+  customColor,
+  ...buttonProps
+}) => {
   if (bgFill) {
     return (
       <button
         {...buttonProps}
+        css={customColor !== undefined ? customStyle(customColor) : undefined}
         className={`flex items-center justify-center p-2 rounded-full hover:bg-opacity-50 ${themeClassesBgFill(theme)}`}
         type='button'
         onClick={onClick}
@@ -51,7 +68,13 @@ export const IconButton: FC<Props> = ({ theme, className, svgComponent, onClick,
   }
 
   return (
-    <button {...buttonProps} className={className} type='button' onClick={onClick}>
+    <button
+      {...buttonProps}
+      css={customColor !== undefined ? customStyle(customColor) : undefined}
+      className={className}
+      type='button'
+      onClick={onClick}
+    >
       <span>{svgComponent(`w-8 h-8 stroke-2 ${themeClasses(theme)}`)}</span>
     </button>
   );

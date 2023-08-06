@@ -1,19 +1,20 @@
-/**
- * TODO: 色コードを定数化する
- */
-export const customStyles = (isError: boolean) => ({
+import { COLOR_PALETTE } from '@/utils/styles/palette';
+
+import type { CustomColor } from '@/components/ui/type';
+
+export const customStyles = (isError: boolean, customColor: CustomColor['customColor']) => ({
   container: (provided: Record<string, unknown>) => ({
     ...provided,
     display: 'flex',
     fontSize: '0.875rem',
     lineHeight: '1.25rem',
-    background: '#fff',
+    background: customColor?.contentBackgroundColor || COLOR_PALETTE.white,
     borderRadius: '0.375rem',
   }),
   placeholder: (defaultStyle: Record<string, unknown>) => {
     return {
       ...defaultStyle,
-      color: '#898C96',
+      color: customColor?.textColor || COLOR_PALETTE.basePrimary,
     };
   },
   indicatorSeparator: () => ({
@@ -21,7 +22,7 @@ export const customStyles = (isError: boolean) => ({
   }),
   dropdownIndicator: (provided: Record<string, unknown>) => ({
     ...provided,
-    color: '#898C96',
+    color: COLOR_PALETTE.basePrimary,
     padding: '0.5rem',
   }),
   valueContainer: (provided: Record<string, unknown>) => ({
@@ -29,15 +30,23 @@ export const customStyles = (isError: boolean) => ({
     padding: '0',
   }),
   control: (_provided: Record<string, unknown>, state: { isFocused: boolean }) => {
-    const borderColor = isError ? '#FF4747' : state.isFocused ? '#A7CCFC' : '#898C96';
+    const borderColor = isError
+      ? COLOR_PALETTE.error
+      : state.isFocused
+      ? COLOR_PALETTE.primary
+      : COLOR_PALETTE.basePrimary;
 
     return {
       display: 'flex',
-      border: `solid 1px ${borderColor}`,
+      border: `solid 1px ${customColor?.borderColor || borderColor}`,
+      borderColor: state.isFocused
+        ? customColor?.primaryColor || COLOR_PALETTE.primary
+        : customColor?.borderColor || borderColor,
       borderRadius: '0.375rem',
       width: '100%',
       padding: '0 0 0 0.75rem',
       outline: 'none',
+      '--tw-ring-color': customColor?.primaryColor,
       boxShadow: state.isFocused
         ? 'var(--tw-ring-inset) 0 0 0 calc(3px + var(--tw-ring-offset-width)) var(--tw-ring-color)'
         : 'none',
@@ -49,14 +58,17 @@ export const customStyles = (isError: boolean) => ({
     return {
       ...provided,
       fontWeight,
-      backgroundColor: '#fff',
-      color: '#000',
+      backgroundColor: COLOR_PALETTE.white,
       fontSize: '0.875rem',
       lineHeight: '1.25rem',
       '&:hover': {
         cursor: 'pointer',
-        backgroundColor: '#A7CCFC',
+        backgroundColor: customColor?.primaryColor || COLOR_PALETTE.primary,
       },
     };
   },
+  multiValue: (provided: Record<string, unknown>) => ({
+    ...provided,
+    backgroundColor: customColor?.borderColor || COLOR_PALETTE.basePrimary,
+  }),
 });

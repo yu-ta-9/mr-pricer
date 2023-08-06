@@ -1,11 +1,13 @@
-import { memo, type FC, useEffect } from 'react';
+import { memo, useEffect } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 
 import { Field } from '@/components/pages/Publish/Form/fields';
+import { usePublishPageContext } from '@/components/pages/Publish/usePublishPageContext';
 import { RadioGroup } from '@/components/ui/RadioGroup';
 
 import type { postSchemaType } from '@/app/api/p/result/schema';
 import type { FormData } from '@/components/pages/Publish/type';
+import type { FC } from 'react';
 
 type Props = {
   index: number;
@@ -15,6 +17,7 @@ type Props = {
 };
 
 const _ConditionField: FC<Props> = ({ index, field, name, conditionFieldIndexes }) => {
+  const { formData } = usePublishPageContext();
   const { control, setValue, watch } = useFormContext<postSchemaType>();
 
   const watchValue = watch(`${name}.value`);
@@ -43,6 +46,7 @@ const _ConditionField: FC<Props> = ({ index, field, name, conditionFieldIndexes 
               onChange(Number(value));
             }}
             error={error?.message}
+            customColor={formData?.profile?.profileTheme || undefined}
           />
         )}
       />

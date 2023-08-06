@@ -21,23 +21,35 @@ export const Result: FC<Props> = ({ result, isCalculating, onCalculate }) => {
   };
 
   return (
-    <section className='flex flex-col w-full gap-4 p-4 border-2 rounded-lg border-primary'>
+    <section
+      className='flex flex-col w-full gap-4 p-4 border-2 rounded-lg border-primary'
+      style={{
+        backgroundColor: formData?.profile?.profileTheme?.contentBackgroundColor,
+        borderColor: formData?.profile?.profileTheme?.borderColor,
+      }}
+    >
       <p className='font-bold text-normal'>お見積り</p>
       <h2 className='text-2xl font-bold'>{formatToThousandsSeparator(result)}円（税抜）</h2>
 
       <div className='flex items-center gap-2'>
         ご依頼内容を変更して再計算が可能です。
         <IconButton
-          svgComponent={(className) => <ArrowUpCircleIcon className={className} />}
+          svgComponent={(className, style) => <ArrowUpCircleIcon className={className} style={style} />}
           onClick={handleMoveToTop}
           theme='primary'
+          customColor={formData?.profile?.profileTheme || undefined}
         />
       </div>
 
       {isCalculating ? (
         <LoadingIcon />
       ) : (
-        <Button theme='primary' type='button' onClick={onCalculate}>
+        <Button
+          theme='primary'
+          type='button'
+          onClick={onCalculate}
+          customColor={formData?.profile?.profileTheme || undefined}
+        >
           再計算
         </Button>
       )}
@@ -45,7 +57,13 @@ export const Result: FC<Props> = ({ result, isCalculating, onCalculate }) => {
       <p className='font-bold text-normal'>{formData?.profile?.name}さんへのご依頼はこちらから！</p>
 
       {formData?.profile?.profileLinks.map((profileLink) => (
-        <TextLink key={profileLink.id} type='external' label={profileLink.label} href={profileLink.url} />
+        <TextLink
+          key={profileLink.id}
+          type='external'
+          label={profileLink.label}
+          href={profileLink.url}
+          customColor={formData?.profile?.profileTheme || undefined}
+        />
       ))}
     </section>
   );
