@@ -46,7 +46,7 @@
     "react-hook-form": "^7.45.1",
     "react-select": "^5.7.4",
     "tailwindcss": "3.3.2",
-    "typescript": "5.2.0-dev.20230606",
+    "typescript": "5.2.0-dev.20230806",
     "zod": "^3.21.4"
   },
   "devDependencies": {
