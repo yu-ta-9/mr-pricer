@@ -49,6 +49,11 @@ const calculateByField = (
   fieldValue: postSchemaType['fields'][number],
   fieldData: FormData['fields'][number],
 ): number => {
+  if (!fieldValue.value) {
+    // 未入力時など不正な値が入ってきた場合
+    return 0;
+  }
+
   switch (fieldData.type) {
     case 'SELECT': {
       // 複数選択
