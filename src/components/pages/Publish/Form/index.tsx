@@ -4,18 +4,17 @@ import { FormProvider, useForm } from 'react-hook-form';
 
 import { postSchema } from '@/app/api/p/result/schema';
 import { Field } from '@/components/pages/Publish/Form/fields';
-import { Result } from '@/components/pages/Publish/Profile/Result';
+import { Result } from '@/components/pages/Publish/Form/Result';
 import { usePublishPageContext } from '@/components/pages/Publish/usePublishPageContext';
 import { Button } from '@/components/ui/Button';
 import { Heading } from '@/components/ui/Heading';
 import { LoadingIcon } from '@/components/ui/LoadingIcon';
-import { useToast } from '@/hooks/useToast';
 
 import type { postSchemaType } from '@/app/api/p/result/schema';
 import type { FC } from 'react';
 
 export const Form: FC = () => {
-  const { openToast } = useToast();
+  // const { openToast } = useToast();
   const { formData, calculate } = usePublishPageContext();
   const methods = useForm<postSchemaType>({
     resolver: zodResolver(postSchema),
@@ -28,31 +27,22 @@ export const Form: FC = () => {
   });
 
   const [isCalculating, setIsCalculating] = useState(false);
-  const [result, setResult] = useState<number>();
+  const [result, setResult] = useState<number>(0);
 
   const handleSubmit = async () => {
-    await methods.trigger();
-    if (!methods.formState.isValid) {
-      // TODO: 条件分岐に基づくバリデーションを作る
-      openToast('error', '未入力の項目があります');
-      return;
-    }
+    // TODO: バリデーションを一時解除
+    // await methods.trigger();
+    // if (!methods.formState.isValid) {
+    //   // TODO: 条件分岐に基づくバリデーションを作る
+    //   openToast('error', '未入力の項目があります');
+    //   return;
+    // }
 
     setIsCalculating(true);
 
     // 見積もり計算
     const data = methods.getValues();
     const result = calculate(data);
-
-    // TODO: API不要になったら消す
-    // const res = await fetch('/api/p/result', {
-    //   method: 'POST',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //   },
-    //   body: JSON.stringify({ friendlyKey: data.friendlyKey, fields: data.fields }),
-    // });
-    // const json = await res.json();
 
     setResult(result);
     setIsCalculating(false);

@@ -53,7 +53,7 @@ export const Result: FC<Props> = ({ result, isCalculating, onCalculate }) => {
           onClick={onCalculate}
           customColor={formData?.profile?.profileTheme || undefined}
         >
-          再計算
+          お見積額計算
         </Button>
       )}
 
