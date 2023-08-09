@@ -19,7 +19,7 @@ const SignIn = async () => {
   }
 
   return (
-    <main className='flex flex-col items-center mt-40 min-h-screen p-24'>
+    <main className='flex flex-col items-center justify-center min-h-screen p-24'>
       <LoginForm />
     </main>
   );
