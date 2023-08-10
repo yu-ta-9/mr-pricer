@@ -1,5 +1,6 @@
 'use client';
 
+import { Ad } from '@/components/pages/Publish/Ad';
 import { PublishPageContext } from '@/components/pages/Publish/context';
 import { Form } from '@/components/pages/Publish/Form';
 import { Header } from '@/components/pages/Publish/Header';
@@ -29,6 +30,12 @@ export const Publish: FC<Props> = ({ formData, profileIconUrl }) => {
           {formData.profile !== undefined && <Profile />}
 
           <Form />
+        </div>
+
+        <hr className='w-full h-[2px] max-w-5xl mx-auto mt-4 rounded sm:w-3/5 bg-base-primary' />
+
+        <div className='w-full max-w-5xl mx-auto sm:w-3/5'>
+          <Ad />
         </div>
       </main>
     </PublishPageContext.Provider>
