@@ -5,16 +5,32 @@ import { signIn } from 'next-auth/react';
 export const LoginForm = () => {
   return (
     <div className='flex flex-col items-center gap-4 font-mono'>
+      <p className='italic font-bold text-primary'>見積もりフォーム作成アプリ</p>
+
       <div>
         <img src='/images/icon.png' alt='' className='w-24 h-24' />
       </div>
+
       <div className='text-center'>
         <h1 className='text-xl font-bold text-black'>Mr. Pricer</h1>
         <p>（β版）</p>
       </div>
+
+      <iframe
+        width='560'
+        height='315'
+        src='https://www.youtube.com/embed/ZTixlAgww-g?rel=0&loop=1&playlist=ZTixlAgww-g'
+        title='YouTube video player'
+        frameBorder='0'
+        allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share'
+        allowFullScreen
+      ></iframe>
+
+      <p className='font-bold text-black'>以下からご利用いただけます↓</p>
+
       <button
         type='button'
-        className='text-white w-full  bg-[#4285F4] hover:bg-[#4285F4]/90 focus:ring-4 focus:outline-none focus:ring-[#4285F4]/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center justify-between dark:focus:ring-[#4285F4]/55'
+        className='text-white w-full  bg-[#4285F4] hover:bg-[#4285F4]/90 focus:ring-4 focus:outline-none focus:ring-[#4285F4]/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center justify-between dark:focus:ring-[#4285F4]/55 sm:w-60'
         onClick={() => signIn('google')}
       >
         <svg
