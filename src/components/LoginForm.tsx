@@ -23,7 +23,7 @@ export const LoginForm = () => {
         title='YouTube video player'
         frameBorder='0'
         allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share'
-        allowfullscreen
+        allowFullScreen
       ></iframe>
 
       <p className='font-bold text-black'>以下からご利用いただけます↓</p>
