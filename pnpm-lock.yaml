@@ -9,8 +9,8 @@ dependencies:
     specifier: ^3.354.0
     version: 3.354.0(@aws-sdk/signature-v4-crt@3.357.0)
   '@aws-sdk/s3-request-presigner':
-    specifier: ^3.388.0
-    version: 3.388.0(@aws-sdk/signature-v4-crt@3.357.0)
+    specifier: ^3.395.0
+    version: 3.395.0(@aws-sdk/signature-v4-crt@3.357.0)
   '@aws-sdk/signature-v4-crt':
     specifier: ^3.357.0
     version: 3.357.0
@@ -192,7 +192,7 @@ packages:
     resolution: {integrity: sha512-IzSgsrxUcsrejQbPVilIKy16kAT52EwB6zSaI+M3xxIhKh5+aldEyvI+z6erM7TCLB2BJsFrtHjp6/4/sr+3dA==}
     dependencies:
       '@aws-crypto/util': 3.0.0
-      '@aws-sdk/types': 3.387.0
+      '@aws-sdk/types': 3.391.0
       tslib: 1.14.1
     dev: false
 
@@ -200,7 +200,7 @@ packages:
     resolution: {integrity: sha512-ENNPPManmnVJ4BTXlOjAgD7URidbAznURqD0KvfREyc4o20DPYdEldU1f5cQ7Jbj0CJJSPaMIk/9ZshdB3210w==}
     dependencies:
       '@aws-crypto/util': 3.0.0
-      '@aws-sdk/types': 3.357.0
+      '@aws-sdk/types': 3.387.0
       tslib: 1.14.1
     dev: false
 
@@ -216,7 +216,7 @@ packages:
       '@aws-crypto/ie11-detection': 3.0.0
       '@aws-crypto/supports-web-crypto': 3.0.0
       '@aws-crypto/util': 3.0.0
-      '@aws-sdk/types': 3.357.0
+      '@aws-sdk/types': 3.387.0
       '@aws-sdk/util-locate-window': 3.310.0
       '@aws-sdk/util-utf8-browser': 3.259.0
       tslib: 1.14.1
@@ -229,7 +229,7 @@ packages:
       '@aws-crypto/sha256-js': 3.0.0
       '@aws-crypto/supports-web-crypto': 3.0.0
       '@aws-crypto/util': 3.0.0
-      '@aws-sdk/types': 3.357.0
+      '@aws-sdk/types': 3.387.0
       '@aws-sdk/util-locate-window': 3.310.0
       '@aws-sdk/util-utf8-browser': 3.259.0
       tslib: 1.14.1
@@ -239,7 +239,7 @@ packages:
     resolution: {integrity: sha512-PnNN7os0+yd1XvXAy23CFOmTbMaDxgxXtTKHybrJ39Y8kGzBATgBFibWJKH6BhytLI/Zyszs87xCOBNyBig6vQ==}
     dependencies:
       '@aws-crypto/util': 3.0.0
-      '@aws-sdk/types': 3.357.0
+      '@aws-sdk/types': 3.387.0
       tslib: 1.14.1
     dev: false
 
@@ -252,7 +252,7 @@ packages:
   /@aws-crypto/util@3.0.0:
     resolution: {integrity: sha512-2OJlpeJpCR48CC8r+uKVChzs9Iungj9wkZrl8Z041DWEWvyIHILYKCPNzJghKsivj+S3mLo6BVc7mBNzdxA46w==}
     dependencies:
-      '@aws-sdk/types': 3.387.0
+      '@aws-sdk/types': 3.391.0
       '@aws-sdk/util-utf8-browser': 3.259.0
       tslib: 1.14.1
     dev: false
@@ -898,13 +898,13 @@ packages:
       tslib: 2.6.1
     dev: false
 
-  /@aws-sdk/s3-request-presigner@3.388.0(@aws-sdk/signature-v4-crt@3.357.0):
-    resolution: {integrity: sha512-vMdIS5ce5zTEaZUsbpoMf8uQNjF2J2vRizsr5pomV71zLUdLYubSr5TA7fKBSimwjS3XMCyKX2rJkGGVK5JGmQ==}
+  /@aws-sdk/s3-request-presigner@3.395.0(@aws-sdk/signature-v4-crt@3.357.0):
+    resolution: {integrity: sha512-SLjka5OY33gXS40CKhde/t8HZp6lMEv9oQzKrtDekXQp5t/iC6SrXincfA69Q34CZe7LFeeBEHsM9mrA1GgRoA==}
     engines: {node: '>=14.0.0'}
     dependencies:
-      '@aws-sdk/signature-v4-multi-region': 3.387.0(@aws-sdk/signature-v4-crt@3.357.0)
-      '@aws-sdk/types': 3.387.0
-      '@aws-sdk/util-format-url': 3.387.0
+      '@aws-sdk/signature-v4-multi-region': 3.391.0(@aws-sdk/signature-v4-crt@3.357.0)
+      '@aws-sdk/types': 3.391.0
+      '@aws-sdk/util-format-url': 3.391.0
       '@smithy/middleware-endpoint': 2.0.3
       '@smithy/protocol-http': 2.0.3
       '@smithy/smithy-client': 2.0.3
@@ -959,8 +959,8 @@ packages:
       tslib: 2.6.1
     dev: false
 
-  /@aws-sdk/signature-v4-multi-region@3.387.0(@aws-sdk/signature-v4-crt@3.357.0):
-    resolution: {integrity: sha512-SGuUbEFi8BXYVv4M7Hc0488I7uZbTVBW19j/B7bnyfbKFrndBXM366s/mChx4iELtESQ61AAstyafx5nGj5tIg==}
+  /@aws-sdk/signature-v4-multi-region@3.391.0(@aws-sdk/signature-v4-crt@3.357.0):
+    resolution: {integrity: sha512-YMBWCkk8/Q85mqyf5eOn/XxAYflmxikYAU9ZL11fu9zPTUU2JsrsMJrsQmqia+Lp1jhQNQ9K3QFngG1hECflgQ==}
     engines: {node: '>=14.0.0'}
     peerDependencies:
       '@aws-sdk/signature-v4-crt': ^3.118.0
@@ -969,7 +969,7 @@ packages:
         optional: true
     dependencies:
       '@aws-sdk/signature-v4-crt': 3.357.0
-      '@aws-sdk/types': 3.387.0
+      '@aws-sdk/types': 3.391.0
       '@smithy/protocol-http': 2.0.3
       '@smithy/signature-v4': 2.0.3
       '@smithy/types': 2.2.0
@@ -1042,6 +1042,14 @@ packages:
 
   /@aws-sdk/types@3.387.0:
     resolution: {integrity: sha512-YTjFabNwjTF+6yl88f0/tWff018qmmgMmjlw45s6sdVKueWxdxV68U7gepNLF2nhaQPZa6FDOBoA51NaviVs0Q==}
+    engines: {node: '>=14.0.0'}
+    dependencies:
+      '@smithy/types': 2.2.0
+      tslib: 2.6.1
+    dev: false
+
+  /@aws-sdk/types@3.391.0:
+    resolution: {integrity: sha512-QpYVFKMOnzHz/JMj/b8wb18qxiT92U/5r5MmtRz2R3LOH6ooTO96k4ozXCrYr0qNed1PAnOj73rPrrH2wnCJKQ==}
     engines: {node: '>=14.0.0'}
     dependencies:
       '@smithy/types': 2.2.0
@@ -1129,11 +1137,11 @@ packages:
       tslib: 2.6.1
     dev: false
 
-  /@aws-sdk/util-format-url@3.387.0:
-    resolution: {integrity: sha512-kiy7+93M1JeEn3pLJhY/q4G3f9tGsSbsgHKg2mDTCIxJaUmnHIYINN9vhEYQcDCMcWvOF0rzkuB9L8uAzR4O3g==}
+  /@aws-sdk/util-format-url@3.391.0:
+    resolution: {integrity: sha512-cddtpaYxKy8Hi2pCZonJ4RHx+T+nx3ESwr/A+r56jou2PQJiQZGg10rt366waU/GsgnVHvXHcC00CzGSbDkDGg==}
     engines: {node: '>=14.0.0'}
     dependencies:
-      '@aws-sdk/types': 3.387.0
+      '@aws-sdk/types': 3.391.0
       '@smithy/querystring-builder': 2.0.3
       '@smithy/types': 2.2.0
       tslib: 2.6.1
